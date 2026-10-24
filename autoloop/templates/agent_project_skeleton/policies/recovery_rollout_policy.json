@@ -1,0 +1,18 @@
+{
+  "mode": "shadow",
+  "canary_percentage": 10,
+  "actions": {
+    "replan_from_spec": {
+      "eligibility_rule": "acceptance_status=rejected",
+      "max_retry_budget": 2,
+      "expected_terminal_state": "REJECTED",
+      "rollback_rule": "disable_action_on_terminal_mismatch"
+    },
+    "taxonomy_review_required": {
+      "eligibility_rule": "primary_failure_type in BUSINESS_*",
+      "max_retry_budget": 1,
+      "expected_terminal_state": "REJECTED",
+      "rollback_rule": "disable_action_on_repeat_window"
+    }
+  }
+}

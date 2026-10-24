@@ -1,0 +1,14 @@
+{
+  "project_id": "autoloop-project",
+  "phase_id": "phase_01",
+  "prd_path": "./blueprint.md",
+  "decision": "rejected",
+  "reviewer": "auto_review_agent",
+  "notes": "Auto-rejected due to risk signals: MISSING_REQUIRED_TESTS:integration,unit, FAILED_GRADERS:contract_validator, FIRST_FAILURE_STAGE:reviewer_output_missing, OWNER_AGENT:reviewer | Repair template: Reviewer agent must emit strict JSON with verdict/findings/finding_codes; if needs_revision, include at least one finding code.",
+  "evidence_file": "./autoloop/runtime_real8/evidence/autoloop-project/phase_01/evidence_phase_01_20260307114730542018.json",
+  "failure_signature": "reviewer_output_missing:module_main",
+  "first_failure_stage": "reviewer_output_missing",
+  "repair_template": "Reviewer agent must output strict JSON with verdict, findings, and finding_codes.",
+  "required_hook": "./autoloop/runtime_real8/hooks/phase_01_human_review_required.json",
+  "timestamp": "2026-03-07T11:47:37.248051"
+}

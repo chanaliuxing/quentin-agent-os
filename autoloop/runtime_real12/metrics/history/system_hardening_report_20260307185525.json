@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-03-07T18:55:25.600533",
+  "sample_size": 1,
+  "manual_intervention_count": 1,
+  "manual_intervention_rate": 1.0,
+  "auto_resume_success_count": 0,
+  "auto_resume_success_rate": 0.0,
+  "repeat_failure_signature_rate": 0.0,
+  "top_failure_signatures": [
+    [
+      "reviewer_output_missing:module_main",
+      1
+    ]
+  ],
+  "delta_vs_previous": {
+    "manual_intervention_rate": 0.0,
+    "auto_resume_success_rate": 0.0,
+    "repeat_failure_signature_rate": 0.0
+  }
+}

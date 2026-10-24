@@ -1,0 +1,12 @@
+{
+  "project_id": "autoloop-project",
+  "phase_id": "phase_01",
+  "status": "human_review_required",
+  "acceptance_status": "rejected",
+  "failed_modules": [
+    "module_main"
+  ],
+  "evidence_file": "./autoloop/runtime_real2/evidence/autoloop-project/phase_01/evidence_phase_01_20260307034352536574.json",
+  "replan_rounds": 1,
+  "timestamp": "2026-03-07T03:43:52.539945"
+}

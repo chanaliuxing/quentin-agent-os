@@ -1,0 +1,27 @@
+mcp_security:
+  # Master switch for exposing MCP tools to the Quentin runtime ToolManager.
+  enabled: false
+
+  # Whether the system can auto-register newly discovered MCP tools without human gating.
+  # Keep false to avoid tool explosion.
+  allow_auto_tool_install: false
+
+  # If enabled, tool registration may be gated by the tool_governance council (pluggable).
+  enable_tool_governance: false
+  tool_governance_council: tool_governance
+
+  # Tool learning (schema-based example synthesis) on tool registration.
+  enable_tool_learning: false
+  tool_learning_max_examples: 2
+
+  # Registry scopes considered "official" (optional; used by future static filters).
+  official_scopes: []
+
+  # Explicitly trusted MCP servers/tools (optional).
+  whitelist: []
+
+  # High-risk categories; used for default sandbox-only behavior.
+  dangerous_categories:
+    - filesystem
+    - shell
+    - browser

@@ -1,0 +1,59 @@
+name: Planning Threshold Gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  threshold-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . pytest
+      - name: Build planning benchmark report
+        run: |
+          python scripts/planning_process_benchmark.py \
+            --repo-root . \
+            --output generated/benchmarks/planning_process_benchmark_report.json \
+            --previous generated/benchmarks/planning_process_benchmark_prev.json \
+            --history generated/benchmarks/planning_process_benchmark_history.jsonl \
+            --domain-bucket ${QUENTIN_BENCHMARK_DOMAIN_BUCKET:-global} \
+            --min-score 0.0
+      - name: Generate threshold recommendation
+        run: |
+          python scripts/planning_threshold_recommendation.py \
+            --history generated/benchmarks/planning_process_benchmark_history.jsonl \
+            --output generated/benchmarks/planning_threshold_recommendation.json \
+            --min-samples ${QUENTIN_VERIFY_AUTOCALIBRATE_MIN_SAMPLES:-8} \
+            --quantile ${QUENTIN_VERIFY_AUTOCALIBRATE_QUANTILE:-0.30}
+      - name: Generate threshold env patch
+        run: |
+          python scripts/planning_threshold_env_patch.py \
+            --recommendation generated/benchmarks/planning_threshold_recommendation.json \
+            --output generated/benchmarks/planning_threshold_env_patch.env \
+            --bucket ${QUENTIN_BENCHMARK_DOMAIN_BUCKET:-global}
+      - name: Enforce threshold drift gate
+        run: |
+          python scripts/planning_threshold_ci_gate.py \
+            --env .env \
+            --patch generated/benchmarks/planning_threshold_env_patch.env \
+            --approval config/planning_threshold_gate_approval.json \
+            --report generated/benchmarks/planning_threshold_gate_report.json \
+            --max-delta ${QUENTIN_THRESHOLD_GATE_MAX_DELTA:-0.08}
+      - name: Upload threshold artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: planning-threshold-artifacts
+          path: |
+            generated/benchmarks/planning_process_benchmark_report.json
+            generated/benchmarks/planning_process_benchmark_history.jsonl
+            generated/benchmarks/planning_threshold_recommendation.json
+            generated/benchmarks/planning_threshold_env_patch.env
+            generated/benchmarks/planning_threshold_gate_report.json

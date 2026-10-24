@@ -1,0 +1,196 @@
+{
+  "version": "3.1",
+  "requirements": [
+    {
+      "id": "loop.cognitive.v1",
+      "title": "Cognitive Loop Core Functionality",
+      "category": "loop",
+      "description": "Cognitive Loop must record Trace / Summary / Lessons and write valuable info to STS.",
+      "priority": "high",
+      "module_hint": "quentin/runtime/cognitive_loop.py",
+      "symbols_expected": ["CognitiveLoop.run_task", "CognitiveLoop"],
+      "tests_expected": ["venv/bin/python -c \"exit(0)\""],
+      "runtime_signals": ["gap_start"]
+    },
+    {
+      "id": "memory.fabric.v1",
+      "title": "Memory Fabric Basic Operations",
+      "category": "memory",
+      "description": "Memory Fabric must support atomic remembering and querying.",
+      "priority": "high",
+      "module_hint": "quentin/memory/fabric.py",
+      "symbols_expected": ["MemoryFabric.remember_atomic", "MemoryFabric.recall"]
+    },
+    {
+      "id": "memory.fabric.hybrid_recall.v1",
+      "title": "Memory Fabric Hybrid Recall",
+      "category": "memory",
+      "description": "MemoryFabric.recall must support text_only/vector_only/hybrid and emit debug trace when enabled.",
+      "priority": "high",
+      "module_hint": "quentin/memory/fabric.py",
+      "symbols_expected": ["MemoryFabric.recall", "MemoryFabric.remember_atomic"]
+    },
+    {
+      "id": "memory.sqlite_vec.store.v1",
+      "title": "SQLite Vec Store Optional Backend",
+      "category": "memory",
+      "description": "SqliteVecMemoryStore must exist and be selectable via env/config with safe fallback to SQLite.",
+      "priority": "medium",
+      "module_hint": "quentin/memory/store_sqlite_vec.py",
+      "symbols_expected": ["SqliteVecMemoryStore.search", "SqliteVecMemoryStore.reindex_indexes"]
+    },
+    {
+      "id": "embeddings.fallback.v1",
+      "title": "Embedding Provider Fallback",
+      "category": "memory",
+      "description": "Embedding client factory must support fallback and expose health snapshot.",
+      "priority": "high",
+      "module_hint": "quentin/infra/llm/embeddings.py",
+      "symbols_expected": ["FallbackEmbeddingClient.embed_text", "create_embedding_client_from_env", "get_embedding_health_snapshot"]
+    },
+    {
+      "id": "infra.lanes.v1",
+      "title": "Lane Concurrency Control",
+      "category": "infra",
+      "description": "LaneManager must provide per-lane concurrency control for session/global boundaries.",
+      "priority": "high",
+      "module_hint": "quentin/infra/concurrency/lanes.py",
+      "symbols_expected": ["LaneManager.run_in_lanes", "AsyncLaneManager.enqueue"]
+    },
+    {
+      "id": "kernel.safety.guard.v1",
+      "title": "SafetyKernel Guard Action",
+      "category": "kernel",
+      "description": "SafetyKernel.guard_action must exist and be used by llm/tool/code-patch critical paths.",
+      "priority": "high",
+      "module_hint": "quentin/kernel/safety.py",
+      "symbols_expected": ["SafetyKernel.guard_action", "SafetyKernel._audit"]
+    },
+    {
+      "id": "tools.policy_stacking.v1",
+      "title": "Tool Policy Stacking and Hooks",
+      "category": "tools",
+      "description": "Tool manager must support before_tool_call hooks and policy stacking for allow/deny enforcement.",
+      "priority": "high",
+      "module_hint": "quentin/tools/manager.py",
+      "symbols_expected": ["ToolManager.call_tool", "resolve_effective_tool_policy"]
+    },
+    {
+      "id": "llm.failover.classifier.v1",
+      "title": "FailoverReason Classifier",
+      "category": "llm",
+      "description": "Failover classifier must bucket common provider errors for fast recovery.",
+      "priority": "high",
+      "module_hint": "quentin/llm/failover.py",
+      "symbols_expected": ["classify_failover_reason", "coerce_failover_error"]
+    },
+    {
+      "id": "llm.auth_profiles.v1",
+      "title": "Auth Profiles Store and Rotation",
+      "category": "llm",
+      "description": "Auth profile store must support cooldown/disable and selection strategy for failover.",
+      "priority": "high",
+      "module_hint": "quentin/llm/auth_profiles.py",
+      "symbols_expected": ["list_available_profiles", "mark_failure"]
+    },
+    {
+      "id": "routing.model_router.canonical.v1",
+      "title": "Canonical ModelRouter",
+      "category": "routing",
+      "description": "Canonical router must be callable and provide structured routing decisions with logging.",
+      "priority": "high",
+      "module_hint": "quentin/routing/model_router.py",
+      "symbols_expected": ["ModelRouter.route", "ModelRouter.__call__", "ModelRouteRequest"]
+    },
+    {
+      "id": "research.eval_harness.v1",
+      "title": "Eval Harness Run Suite",
+      "category": "research",
+      "description": "EvalHarness must be able to run a suite and aggregate metrics for A/B decisions.",
+      "priority": "high",
+      "module_hint": "quentin/l3/research/eval_harness.py",
+      "symbols_expected": ["EvalHarness.run_suite", "EvalHarness.run_dataset"]
+    },
+    {
+      "id": "research.experiment_orchestrator.v1",
+      "title": "Experiment Orchestrator Promote Variant",
+      "category": "research",
+      "description": "ExperimentOrchestrator must support decide-and-promote variant for L3->L2->L1 feedback loop.",
+      "priority": "high",
+      "module_hint": "quentin/l3/research/experiment_orchestrator.py",
+      "symbols_expected": ["ExperimentOrchestrator.decide_and_promote_variant", "ExperimentOrchestrator.create_experiment"]
+    },
+    {
+      "id": "observability.snapshot.blueprint_maps.v1",
+      "title": "Observability Snapshot Blueprint Maps",
+      "category": "observability",
+      "description": "SystemSnapshot must include blueprint_* maps for coverage analyzer inputs.",
+      "priority": "medium",
+      "module_hint": "meta_agent/observability/snapshot.py",
+      "symbols_expected": ["SystemSnapshot.to_dict", "BlueprintStats", "PatchStats"]
+    },
+    {
+      "id": "observability.coverage_report.v1",
+      "title": "Blueprint Coverage Report Script Runs",
+      "category": "observability",
+      "description": "Coverage report script must run end-to-end without crashing.",
+      "priority": "high",
+      "module_hint": "scripts/blueprint_coverage_report.py",
+      "symbols_expected": ["main", "load_blueprint_index"]
+    },
+    {
+      "id": "evolution.state_store.v1",
+      "title": "Self Evolution State Store Persistence",
+      "category": "evolution",
+      "description": "SelfEvolutionStateStore must implement schema-stable load/save under data/.",
+      "priority": "high",
+      "module_hint": "meta_agent/evolution/schedule_state.py",
+      "symbols_expected": ["SelfEvolutionStateStore.load", "SelfEvolutionStateStore.save"]
+    },
+    {
+      "id": "skills.executor.v1",
+      "title": "SkillExecutor Executes Builtins",
+      "category": "skills",
+      "description": "SkillExecutor must execute at least builtin skills end-to-end for TaskExecutor plans.",
+      "priority": "medium",
+      "module_hint": "meta_agent/skills/executor.py",
+      "symbols_expected": ["SkillExecutor.execute", "SkillExecutor._builtin_echo"]
+    },
+    {
+      "id": "self_programming.programmer_agent.v1",
+      "title": "ProgrammerAgent Generates Modifications",
+      "category": "self_programming",
+      "description": "ProgrammerAgent must translate DevPlan work_items into FileModification list using registered tools.",
+      "priority": "medium",
+      "module_hint": "meta_agent/self_programming/agents/programmer.py",
+      "symbols_expected": ["ProgrammerAgent.implement", "ProgrammerAgent.__init__"]
+    },
+    {
+      "id": "blueprint.improver.no_guess_paths.v1",
+      "title": "BlueprintImprover Does Not Guess Paths",
+      "category": "blueprint",
+      "description": "BlueprintImprover must not target non-existent files when converting gaps to patch issues.",
+      "priority": "high",
+      "module_hint": "quentin/blueprint/improver.py",
+      "symbols_expected": ["resolve_existing_file_path", "BlueprintImprover.run_once"]
+    },
+    {
+      "id": "research.runners.no_synthetic.v1",
+      "title": "Research Runners Avoid Synthetic Metrics",
+      "category": "research",
+      "description": "PatchEvalRunner and SkillEvolutionRunner must not emit synthetic metrics unless explicitly enabled.",
+      "priority": "medium",
+      "module_hint": "quentin/l3/research/runners/patch_eval_runner.py",
+      "symbols_expected": ["PatchEvalRunner.run_variant", "PatchEvalRunner._disabled_patch_eval_fn"]
+    },
+    {
+      "id": "self_programming.engine.v2",
+      "title": "Self-Programming Engine V2 Core Loop",
+      "category": "self_programming",
+      "description": "Self-Programming Engine V2 must support gap analysis and code generation.",
+      "priority": "high",
+      "module_hint": "meta_agent/self_programming/engine_v2.py",
+      "symbols_expected": ["SelfProgrammingEngineV2.run_for_gaps", "SelfProgrammingEngineV2._run_for_gaps_async"]
+    }
+  ]
+}

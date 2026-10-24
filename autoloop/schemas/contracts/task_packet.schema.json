@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "autoloop/schemas/contracts/task_packet.schema.json",
+  "title": "TaskPacket",
+  "type": "object",
+  "required": [
+    "task_id",
+    "run_id",
+    "phase_id",
+    "module_id",
+    "agent",
+    "sor_refs",
+    "input_artifact_ids",
+    "writable_paths",
+    "expected_output_contract",
+    "gate_expectations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "module_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sor_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "input_artifact_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "writable_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected_output_contract": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gate_expectations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

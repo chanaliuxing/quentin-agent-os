@@ -1,0 +1,12 @@
+id: git_safe_pr_merge
+name: git.safe_pr_merge
+description: Execute guarded git flow with safety gates (worktree, tests, commit, push, PR, merge).
+entrypoint: "logic:run"
+domain: engineering
+tags:
+  - git
+  - safety
+  - delivery
+  - exec_skill
+permissions: []
+requires_env: []

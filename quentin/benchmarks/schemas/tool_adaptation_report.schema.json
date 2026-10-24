@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tool Adaptation Benchmark Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "repo_root",
+    "calibration_bucket",
+    "quality_score",
+    "min_score",
+    "pass",
+    "pass_breakdown",
+    "improved_vs_previous",
+    "previous_score",
+    "capability_radar",
+    "top_weaknesses",
+    "weights",
+    "weights_base",
+    "weight_tuning",
+    "trend_guard",
+    "timeout_summary",
+    "trend_export",
+    "regression_explain",
+    "remediation_queue",
+    "replay",
+    "ci_mode",
+    "deterministic_fixtures",
+    "environment_snapshot",
+    "cases",
+    "issues"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "repo_root": { "type": "string" },
+    "calibration_bucket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain"],
+      "properties": {
+        "domain": { "type": "string" }
+      }
+    },
+    "quality_score": { "type": "number" },
+    "min_score": { "type": "number" },
+    "pass": { "type": "boolean" },
+    "pass_breakdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min_score_pass", "trend_pass", "schema_pass", "timeout_pass"],
+      "properties": {
+        "min_score_pass": { "type": "boolean" },
+        "trend_pass": { "type": "boolean" },
+        "schema_pass": { "type": "boolean" },
+        "timeout_pass": { "type": "boolean" }
+      }
+    },
+    "improved_vs_previous": { "type": "boolean" },
+    "previous_score": { "type": ["number", "null"] },
+    "capability_radar": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    },
+    "top_weaknesses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "score"],
+        "properties": {
+          "name": { "type": "string" },
+          "score": { "type": "number" }
+        }
+      }
+    },
+    "weights": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    },
+    "weights_base": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    },
+    "weight_tuning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "window", "rows_used", "mode", "boosts"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "window": { "type": "integer" },
+        "rows_used": { "type": "integer" },
+        "mode": { "type": "string" },
+        "boosts": { "type": "object" }
+      }
+    },
+    "trend_guard": { "type": "object" },
+    "timeout_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_cases", "timeout_exceeded_count", "pass", "worst_runtime_cases", "runtime_percentiles_ms", "tool_runtime_percentiles_ms"],
+      "properties": {
+        "total_cases": { "type": "integer" },
+        "timeout_exceeded_count": { "type": "integer" },
+        "pass": { "type": "boolean" },
+        "worst_runtime_cases": { "type": "array" },
+        "runtime_percentiles_ms": { "type": "object" },
+        "tool_runtime_percentiles_ms": { "type": "object" }
+      }
+    },
+    "trend_export": { "type": "object" },
+    "regression_explain": { "type": "object" },
+    "remediation_queue": { "type": "array" },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seed", "ci_mode", "command"],
+      "properties": {
+        "seed": { "type": "integer" },
+        "ci_mode": { "type": "boolean" },
+        "command": { "type": "string" }
+      }
+    },
+    "ci_mode": { "type": "boolean" },
+    "deterministic_fixtures": { "type": "boolean" },
+    "environment_snapshot": { "type": "object" },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "title", "passed", "score", "details"],
+        "properties": {
+          "case_id": { "type": "string" },
+          "title": { "type": "string" },
+          "passed": { "type": "boolean" },
+          "score": { "type": "number" },
+          "details": { "type": "object" }
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}

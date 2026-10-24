@@ -1,0 +1,270 @@
+from __future__ import annotations
+
+from dataclasses import dataclass, asdict
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+import json
+
+from quentin.self_programming.eval import load_patch_proposal
+from quentin.self_programming.apply import PatchApplier
+from quentin.traces.core import TraceRecorder, TraceEventType, new_trace_event
+from quentin.utils.time import now_iso, now_utc
+
+
+def _now_iso() -> str:
+    return now_iso()
+
+
+@dataclass
+class PatchDecision:
+    """
+    对某个 PatchProposal 的治理决策。
+    """
+    proposal_id: str
+    recommended_action: str   # "apply" | "hold" | "reject"
+    environment: str          # "sandbox" | "staging" | "prod"
+    risk_level: str           # "low" | "medium" | "high"
+    auto_apply: bool
+    rationale: str
+    constraints: Dict[str, Any]
+    decided_at: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+class PatchGovernanceCouncil:
+    """
+    Patch 治理理事会：
+
+      - 使用多模型 council（或单一 LLM）对 PatchReport + metrics 做决策
+      - 强制实现安全边界：只允许自动在 sandbox 环境 apply，且仅限 mutable/ 下文件
+      - 写入决策日志 + Trace
+    """
+
+    def __init__(
+        self,
+        *,
+        repo_root: str | Path,
+        council_callable: Any,
+        trace_recorder: TraceRecorder,
+    ) -> None:
+        self.repo_root = Path(repo_root).resolve()
+        self.council = council_callable
+        self.trace_recorder = trace_recorder
+
+        self._reports_dir = self.repo_root / "data" / "patches" / "reports"
+        self._decisions_dir = self.repo_root / "data" / "governance" / "patch_decisions"
+        self._decisions_dir.mkdir(parents=True, exist_ok=True)
+
+        self._patch_applier = PatchApplier(repo_root=self.repo_root, trace_recorder=self.trace_recorder)
+
+    # --------------------------------------------------
+    # 对外：对某个 proposal 做完整治理决策 + 可选自动应用
+    # --------------------------------------------------
+    def govern_patch(
+        self,
+        *,
+        proposal_id: str,
+        metrics: Dict[str, Any],
+        immune_snapshot: Optional[Dict[str, Any]] = None,
+        auto_apply: bool = False,
+    ) -> PatchDecision:
+        """
+        步骤：
+          1. 载入 PatchReport + PatchProposal
+          2. 调用多模型 council 给出 JSON 决策
+          3. 套一层 SafetyKernel 规则（只允许 sandbox + mutable）
+          4. 如 auto_apply=True 且通过安全检查，则调用 PatchApplier.apply_by_id(...)
+          5. 写入决策文件 + TraceEvent
+        """
+        patch_report = self._load_patch_report(proposal_id)
+        proposal = load_patch_proposal(self.repo_root, proposal_id)
+        if proposal is None:
+            raise FileNotFoundError(f"PatchProposal {proposal_id} not found.")
+
+        target_path = proposal.target.path
+
+        # 1) 组合给理事会的上下文
+        governance_input = {
+            "patch_report": patch_report,
+            "proposal": {
+                "proposal_id": proposal.proposal_id,
+                "target_path": proposal.target.path,
+                "rationale": proposal.rationale,
+                "patch_type": proposal.patch_type,
+                "meta": proposal.meta,
+            },
+            "metrics": metrics,
+            "immune_snapshot": immune_snapshot or {},
+            "timestamp": _now_iso(),
+        }
+
+        # 2) 让 council 输出 JSON 决策
+        raw_decision = self._call_council_for_decision(governance_input)
+
+        # 3) 应用安全内核规则（强制 sandbox + mutable）
+        decision = self._apply_safety_kernel(
+            proposal_id=proposal_id,
+            target_path=target_path,
+            raw_decision=raw_decision,
+        )
+
+        # 4) 如允许自动应用，则在 sandbox（当前 repo）执行 PatchApplier
+        if auto_apply and decision.auto_apply and decision.recommended_action == "apply":
+            apply_log = self._patch_applier.apply_by_id(proposal_id, dry_run=False)
+            # 把 apply_log 附加到 constraints 里
+            decision.constraints.setdefault("apply_log", apply_log.to_dict())
+
+        # 5) 落盘 + Trace
+        self._persist_decision(decision)
+        self._record_trace(decision, governance_input)
+
+        return decision
+
+    # --------------------------------------------------
+    # 内部：读取 PatchReport
+    # --------------------------------------------------
+    def _load_patch_report(self, proposal_id: str) -> Dict[str, Any]:
+        path = self._reports_dir / f"{proposal_id}.json"
+        if not path.exists():
+            raise FileNotFoundError(
+                f"PatchReport not found for proposal {proposal_id}: {path}. "
+                "请先运行 scripts.eval_patch 对该 patch 做离线评测。"
+            )
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+
+    # --------------------------------------------------
+    # 内部：调用 council 生成原始决策 JSON
+    # --------------------------------------------------
+    def _call_council_for_decision(self, governance_input: Dict[str, Any]) -> Dict[str, Any]:
+        prompt = (
+            "你是一个由多个模型组成的 AI 治理理事会，负责审查自编程系统产生的代码补丁。\n"
+            "你需要在‘安全内核’的前提下，判断是否允许自动在 sandbox 环境应用该补丁。\n\n"
+            "【输入治理上下文】(JSON)：\n"
+            f"{json.dumps(governance_input, ensure_ascii=False, indent=2)}\n\n"
+            "【决策目标】\n"
+            "1. 如果补丁明显提升稳定性/正确性且风险较低，可以建议自动 apply（仅限 sandbox）。\n"
+            "2. 如果收益不明显、风险不明或评测结果不稳定，建议 hold。\n"
+            "3. 如果补丁可能降低正确性或稳定性，则建议 reject。\n\n"
+            "【请只输出一个 JSON，不要输出任何解释文字】，格式如下：\n"
+            "{\n"
+            '  "recommended_action": "<apply|hold|reject>",\n'
+            '  "environment": "<sandbox|staging|prod>",\n'
+            '  "risk_level": "<low|medium|high>",\n'
+            '  "auto_apply": true 或 false,\n'
+            '  "rationale": "简要说明原因，使用中文",\n'
+            '  "constraints": {\n'
+            '     "max_env": "<sandbox|staging|prod>",\n'
+            '     "notes": "其它限制条件，可选"\n'
+            "  }\n"
+            "}\n\n"
+            "注意：这里只是理事会的建议，最终环境和是否自动应用会由安全内核再次检查。"
+        )
+
+        # Support both callable (OllamaLLMClient) and object with deliberate (MultiModelCouncil)
+        if hasattr(self.council, "deliberate"):
+             # MultiModelCouncil.deliberate returns CouncilDeliberationResult
+             res = self.council.deliberate(question=prompt)
+             raw = res.final_answer
+        elif callable(self.council):
+             raw = self.council(prompt)
+        else:
+             raw = ""
+
+        try:
+            # Try to extract JSON if wrapped
+            text = str(raw).strip()
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0].strip()
+            elif "```" in text:
+                text = text.split("```")[1].strip()
+                
+            data = json.loads(text)
+        except Exception:
+            # 如果 council 没按 JSON 说话，给一个保守默认值
+            data = {
+                "recommended_action": "hold",
+                "environment": "sandbox",
+                "risk_level": "medium",
+                "auto_apply": False,
+                "rationale": "无法解析理事会输出，安全起见暂不自动应用。",
+                "constraints": {"max_env": "sandbox", "notes": "fallback_decision"},
+            }
+        return data
+
+    # --------------------------------------------------
+    # 内部：应用安全内核规则
+    # --------------------------------------------------
+    def _apply_safety_kernel(
+        self,
+        *,
+        proposal_id: str,
+        target_path: str,
+        raw_decision: Dict[str, Any],
+    ) -> PatchDecision:
+        """
+        安全策略（当前版本）：
+          1. 只允许自动在 sandbox 环境 apply，强制 environment='sandbox'
+          2. 只允许修改 mutable/ 下的代码文件
+          3. 即便 council 想 auto_apply，只要违反 1 或 2，就强制改为 hold + auto_apply=False
+        """
+        rec_action = raw_decision.get("recommended_action", "hold")
+        environment = raw_decision.get("environment", "sandbox")
+        risk_level = raw_decision.get("risk_level", "medium")
+        auto_apply = bool(raw_decision.get("auto_apply", False))
+        rationale = raw_decision.get("rationale", "no rationale")
+        constraints = raw_decision.get("constraints", {}) or {}
+
+        # 1) 强制环境 = sandbox（后续可扩展为 staging，但不允许理事会直接 production）
+        environment = "sandbox"
+        constraints["max_env"] = "sandbox"
+
+        # 2) 目标路径必须在 mutable/ 下
+        if not target_path.startswith("mutable/"):
+            # 不允许自动改 kernel 或 domain 核心逻辑
+            auto_apply = False
+            rec_action = "hold"
+            risk_level = "high"
+            rationale += f" | 安全内核：禁止对非 mutable/ 路径自动应用补丁（target_path={target_path})."
+
+        decision = PatchDecision(
+            proposal_id=proposal_id,
+            recommended_action=rec_action,
+            environment=environment,
+            risk_level=risk_level,
+            auto_apply=auto_apply,
+            rationale=rationale,
+            constraints=constraints,
+            decided_at=_now_iso(),
+        )
+        return decision
+
+    # --------------------------------------------------
+    # 内部：落盘 & Trace
+    # --------------------------------------------------
+    def _persist_decision(self, decision: PatchDecision) -> None:
+        ts = now_utc().strftime("%Y%m%dT%H%M%S")
+        path = self._decisions_dir / f"{decision.proposal_id}_{ts}.json"
+        tmp = path.with_suffix(".tmp")
+
+        with tmp.open("w", encoding="utf-8") as f:
+            json.dump(decision.to_dict(), f, ensure_ascii=False, indent=2)
+        tmp.replace(path)
+
+    def _record_trace(self, decision: PatchDecision, governance_input: Dict[str, Any]) -> None:
+        self.trace_recorder.record_event(
+            new_trace_event(
+                trace_id="self-programming",
+                event_type=TraceEventType.SELF_PROGRAMMING,  # 或者单独扩展一个 GOVERNANCE 类型
+                payload={
+                    "governance_decision": decision.to_dict(),
+                    "governance_input_meta": {
+                        "proposal_id": decision.proposal_id,
+                        "metrics_keys": list((governance_input.get("metrics") or {}).keys()),
+                    },
+                },
+            )
+        )

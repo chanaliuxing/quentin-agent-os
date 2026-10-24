@@ -1,0 +1,154 @@
+# Governance Configuration for Meta-Agent Self-Programming
+# This file defines safety boundaries and policies for autonomous code modification
+
+# Protected paths that self-programming CANNOT modify
+protected_paths:
+  # Core self-programming infrastructure (L0/L1)
+  - "meta_agent/self_programming/engine.py"
+  - "meta_agent/self_programming/metrics_store.py"
+  - "meta_agent/self_programming/strategy.py"
+  - "meta_agent/self_programming/governance.py"  # This file's loader
+
+  # Safety and policy systems
+  - "quentin/kernel/safety.py"
+  - "quentin/kernel/policy.py"
+  - "quentin/kernel/budget.py"
+
+  # Blueprint and infrastructure
+  - "quentin/blueprint/**"
+  - "quentin/infra/**"
+
+  # Configuration files
+  - "governance.yaml"
+  - "pyproject.toml"
+  - "pytest.ini"
+
+  # Critical scripts
+  - "scripts/run_evolution_loop.py"
+
+# Budget limits for self-programming operations
+budgets:
+  # Token limits per time period
+  max_llm_tokens_per_task: 50000
+  max_llm_tokens_per_hour: 200000
+  max_llm_tokens_per_day: 1000000
+
+  # Runtime limits
+  max_test_runtime_seconds: 300  # 5 minutes max for pytest
+  max_pytest_cov_time_seconds: 60  # 1 minute max for coverage analysis
+  max_radon_time_seconds: 30  # 30 seconds max for complexity analysis
+
+  # File operation limits
+  max_file_changes_per_task: 10  # Max files modified in one task
+  max_file_size_bytes: 100000  # Max file size to modify (100KB)
+
+  # Cost limits (optional, for tracking)
+  max_usd_per_task: 1.0
+  max_usd_per_day: 10.0
+
+# Safety policies
+safety:
+  # Actions requiring human approval
+  require_approval_for:
+    - "changes_to_protected_paths"  # Any modification to protected paths
+    - "file_deletions"  # Any file deletion
+    - "test_failures_exceeding_3"  # If more than 3 tests fail
+    - "high_risk_domains"  # Changes to legal/trading/critical domains
+    - "syntax_errors"  # Code with syntax errors
+
+  # Actions that are auto-rejected (never allowed)
+  auto_reject_for:
+    - "delete_entire_directory"  # Never delete entire directories
+    - "modify_git_history"  # Never rewrite git history
+    - "disable_safety_checks"  # Never disable this governance system
+    - "circular_dependencies"  # Reject code that creates import cycles
+
+  # Auto-approve conditions (low-risk changes)
+  auto_approve_for:
+    - "test_files_only"  # Changes only to test files
+    - "documentation_only"  # Changes only to .md files
+    - "passing_all_tests"  # All tests pass AND no protected paths modified
+    - "complexity_reduction"  # Changes that reduce cyclomatic complexity
+
+# Domain-specific policies
+domains:
+  core:
+    risk_level: "medium"
+    max_tokens_per_task: 30000
+    require_tests: true
+
+  research:
+    risk_level: "low"
+    max_tokens_per_task: 50000
+    require_tests: false  # Research code can be experimental
+
+  legal:
+    risk_level: "critical"
+    max_tokens_per_task: 10000
+    require_tests: true
+    require_human_approval: true  # Always require approval
+
+  trading:
+    risk_level: "critical"
+    max_tokens_per_task: 10000
+    require_tests: true
+    require_human_approval: true
+
+# Environment policies
+environments:
+  sandbox:
+    allow_auto_apply: true  # Can auto-apply in sandbox
+    allow_file_deletion: false
+    require_tests: true
+
+  staging:
+    allow_auto_apply: false  # Require review in staging
+    allow_file_deletion: false
+    require_tests: true
+
+  production:
+    allow_auto_apply: false  # Never auto-apply in production
+    allow_file_deletion: false
+    require_tests: true
+    require_human_approval: true
+
+# Rollback policies
+rollback:
+  # Automatically rollback if these conditions occur
+  auto_rollback_on:
+    - "test_pass_rate_drops_below_80_percent"
+    - "error_rate_exceeds_5_percent"
+    - "complexity_increases_by_more_than_50_percent"
+
+  # Keep backups for rollback
+  backup_retention_days: 30
+  max_backups_per_file: 10
+
+# Monitoring and alerts
+monitoring:
+  # Alert conditions
+  alert_on:
+    - "consecutive_failures_exceeding_5"
+    - "budget_usage_exceeds_80_percent"
+    - "protected_path_modification_attempted"
+
+  # Metrics to track
+  track_metrics:
+    - "task_success_rate"
+    - "avg_complexity_change"
+    - "test_coverage_change"
+    - "token_usage"
+
+# Meta-learning policies
+meta_learning:
+  # Allow self-programming to adjust strategy weights
+  allow_strategy_weight_tuning: true
+  max_weight_change_per_iteration: 0.05  # Max 5% change per iteration
+
+  # Allow experimentation
+  allow_experiments: true
+  max_concurrent_experiments: 3
+
+  # Governance updates (this file)
+  allow_governance_proposals: false  # Do NOT allow modifying governance.yaml
+  governance_changes_require: "human_review"

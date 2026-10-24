@@ -1,0 +1,11 @@
+{
+  "primary_failure_type": "AGENT_OUTPUT_MISSING",
+  "first_failure_stage": "qa_output_missing",
+  "missing_artifacts": [],
+  "grader_results": {},
+  "failure_events": [
+    {"cause_type": "AGENT_OUTPUT_MISSING"}
+  ],
+  "expected_signature": "agent_output_missing:qa_output_missing:events:agent_output_missing",
+  "expected_candidate_enum": "AGENT_OUTPUT_MISSING_QA_OUTPUT_MISSING_EVENTS_AGENT_OUTPUT_MISSING"
+}

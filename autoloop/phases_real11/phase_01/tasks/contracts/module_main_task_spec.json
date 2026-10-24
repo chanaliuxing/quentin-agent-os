@@ -1,0 +1,23 @@
+{
+  "contract_version": "1.0",
+  "task_id": "task_phase_01_module_main",
+  "project_id": "autoloop-project",
+  "phase_id": "phase_01",
+  "module_id": "module_main",
+  "requirement_ids": [
+    "req_module_main_core"
+  ],
+  "workspace_id": "ws_phase_01_module_main",
+  "repo_root": ".",
+  "worktree_path": "./autoloop",
+  "base_sha": "84c5e27bd74c849c83dd5953e6936b5349b3d9b1",
+  "head_sha": "84c5e27bd74c849c83dd5953e6936b5349b3d9b1",
+  "input_artifacts": [
+    "artifact_phase_01_prd"
+  ],
+  "output_artifacts": [
+    "app/module_main/artifacts/phase_01_result.json"
+  ],
+  "priority": "p1",
+  "risk_level": "medium"
+}

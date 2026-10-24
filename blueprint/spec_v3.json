@@ -1,0 +1,585 @@
+{
+  "version": "v3",
+  "last_updated": "2026-02-07T00:00:00Z",
+  "phases": [
+    "phase0_kernel_trace",
+    "phase1_memory_reflexion",
+    "phase2_eval_experiments",
+    "phase3_skill_evolution",
+    "phase4_self_programming",
+    "phase5_research_meta_optimization"
+  ],
+  "layers": [
+    "L0_infra_kernel",
+    "L1_base_cognitive",
+    "L2_meta",
+    "L3_research_evolution"
+  ],
+  "items": [
+    {
+      "id": "kernel.safety",
+      "name": "SafetyKernel & 宪法治理",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "safety",
+      "description": "集中管理权限、回滚、风险控制和审计。所有高风险动作必须先通过 SafetyKernel。",
+      "required_capabilities": [
+        "policy_engine",
+        "budget_controller",
+        "guard_action_api"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/kernel/safety.py",
+          "quentin/kernel/policy.py",
+          "quentin/kernel/budget.py"
+        ],
+        "trace_capability_id": "safety_kernel",
+        "trace_signals": [
+          {"event_type": "decision", "trace_id": "safety_kernel", "payload": {"action": "guard_action_result"}}
+        ],
+        "experiment_capability": "safety_kernel"
+      }
+    },
+    {
+      "id": "kernel.model_router",
+      "name": "模型路由 ModelRouter",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "routing",
+      "description": "根据任务类型/模式选择合适模型，记录成功率和成本，支持后续数据驱动优化。",
+      "required_capabilities": [
+        "route(mode, task_type)",
+        "logging_usage",
+        "router_optimize"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/llm/router.py"
+        ],
+        "trace_capability_id": "model_router",
+        "trace_signals": [
+          {"event_type": "model_call", "trace_id": "model_router", "payload": {"action": "route"}}
+        ],
+        "experiment_capability": "model_router"
+      }
+    },
+    {
+      "id": "kernel.lanes",
+      "name": "Lanes 并发控制",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "会话级串行 + 全局并发控制，避免同会话乱序与全局阻塞。",
+      "required_capabilities": [
+        "resolve_session_lane",
+        "run_in_lanes",
+        "queue_size_stats"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/infra/concurrency/lanes.py"
+        ],
+        "trace_capability_id": "lanes",
+        "trace_signals": [
+          {"event_type": "execution", "trace_id": "lanes", "payload": {"action": "lane_evidence"}}
+        ],
+        "experiment_capability": "lanes"
+      }
+    },
+    {
+      "id": "kernel.abort",
+      "name": "Abort / Cancellation 取消语义",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "每个 run/trace_id 绑定可传播取消信号，工具/子任务必须可取消并释放资源。",
+      "required_capabilities": [
+        "CancellationToken",
+        "CancellationRegistry",
+        "raise_if_cancelled"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/infra/concurrency/cancellation.py"
+        ],
+        "trace_capability_id": "abort",
+        "trace_signals": [
+          {"event_type": "decision", "trace_id": "abort", "payload": {"action": "cancel_evidence"}}
+        ],
+        "experiment_capability": "abort"
+      }
+    },
+    {
+      "id": "kernel.session_write_lock",
+      "name": "Session Write Lock 会话写锁",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "对会话状态/trace JSONL 等写入加锁，避免并发写损坏数据。",
+      "required_capabilities": [
+        "acquire_session_write_lock"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/runtime/session_write_lock.py"
+        ],
+        "trace_capability_id": "session_write_lock",
+        "trace_signals": [
+          {"event_type": "execution", "trace_id": "session_write_lock", "payload": {"action": "lock_evidence"}}
+        ],
+        "experiment_capability": "session_write_lock"
+      }
+    },
+    {
+      "id": "kernel.context_budget_compaction",
+      "name": "Context Budget & Compaction",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "llm",
+      "description": "上下文预算守护与长文本压缩，避免上下文溢出导致失败循环。",
+      "required_capabilities": [
+        "ContextBudget",
+        "reserve_tokens",
+        "compact_long_text"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/llm/context_budget.py",
+          "quentin/llm/compaction.py"
+        ],
+        "trace_capability_id": "context_budget",
+        "trace_signals": [
+          {"event_type": "decision", "trace_id": "context_budget", "payload": {"action": "budget_evidence"}}
+        ],
+        "experiment_capability": "context_budget"
+      }
+    },
+    {
+      "id": "kernel.auth_profiles_failover",
+      "name": "Auth Profiles & Failover",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "llm",
+      "description": "同模型多 key 轮询与错误分类故障切换，提升稳定性与抗限流能力。",
+      "required_capabilities": [
+        "AuthProfileStore",
+        "provider_failover",
+        "classify_failover_reason"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/llm/auth_profiles.py",
+          "quentin/llm/provider_failover.py",
+          "quentin/llm/failover.py",
+          "quentin/llm/client.py"
+        ],
+        "trace_capability_id": "auth_profiles",
+        "trace_signals": [
+          {"event_type": "model_call", "trace_id": "auth_profiles", "payload": {"action": "profile_evidence"}}
+        ],
+        "experiment_capability": "auth_profiles"
+      }
+    },
+    {
+      "id": "L1.cognitive_loop",
+      "name": "认知循环 CognitiveLoop",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "loop",
+      "description": "接任务、规划、执行、反思，并写入 Trace 与 Memory。",
+      "required_capabilities": [
+        "plan_task",
+        "execute_plan",
+        "critic_reflection",
+        "write_execution_trace",
+        "update_memory_fabric"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/cognitive/loop.py",
+          "quentin/cognitive/loop_impl.py"
+        ],
+        "trace_capability_id": "cognitive_loop",
+        "trace_signals": [
+          {"event_type": "execution", "payload": {"action": "task_start"}}
+        ],
+        "experiment_capability": "cognitive_loop"
+      }
+    },
+    {
+      "id": "L1.planner",
+      "name": "Planner（Hierarchical）",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "planning",
+      "description": "层级规划：goal->milestones->steps，可作为实验 variant 离线评测。",
+      "required_capabilities": [
+        "planner_interface",
+        "hierarchical_planner_v1",
+        "trace_planning"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/planning/planner.py",
+          "quentin/planning/hierarchical_planner.py"
+        ],
+        "trace_capability_id": "planner",
+        "trace_signals": [
+          {"event_type": "planning", "trace_id": "planner", "payload": {"action": "plan_evidence"}}
+        ],
+        "experiment_capability": "planner"
+      }
+    },
+    {
+      "id": "L1.executor",
+      "name": "Executor（工具/技能执行）",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "execution",
+      "description": "执行层：调用工具/技能/运行时动作，并写 trace。",
+      "required_capabilities": [
+        "execute_steps",
+        "tool_invoke",
+        "skill_invoke"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/execution/executor.py",
+          "quentin/execution/skill_executor.py"
+        ],
+        "trace_capability_id": "executor",
+        "trace_signals": [
+          {"event_type": "execution", "trace_id": "executor", "payload": {"action": "exec_evidence"}}
+        ],
+        "experiment_capability": "executor"
+      }
+    },
+    {
+      "id": "L1.tool_governance",
+      "name": "Tool Policy & Hooks（最小权限）",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "tools",
+      "description": "工具权限叠加、调用前拦截/审计、跨模型 schema 适配。",
+      "required_capabilities": [
+        "tool_policy_stacking",
+        "before_tool_call_hook",
+        "schema_transformer"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/tools/manager.py",
+          "quentin/tools/schema_transformer.py"
+        ],
+        "trace_capability_id": "tool_governance",
+        "trace_signals": [
+          {"event_type": "tool_call", "trace_id": "tool_governance", "payload": {"action": "tool_policy_evidence"}}
+        ],
+        "experiment_capability": "tool_governance"
+      }
+    },
+    {
+      "id": "L1.memory_fabric",
+      "name": "Memory Fabric 三层记忆",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "memory",
+      "description": "提供 STS/MTS/LTS 三层记忆存储，支持升级/衰减/合并。",
+      "required_capabilities": [
+        "sts_store",
+        "mts_store",
+        "lts_store",
+        "promotion_policy",
+        "decay_policy"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/memory/fabric.py"
+        ],
+        "trace_capability_id": "memory_fabric",
+        "trace_signals": [
+          {"event_type": "memory", "payload": {"action": "recall"}}
+        ],
+        "experiment_capability": "memory_fabric"
+      }
+    },
+    {
+      "id": "L1.memory_recall_promotion",
+      "name": "Memory Recall Defaults Promotion",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "memory",
+      "description": "将实验 winner 的 recall 参数写入可读配置，并被 MemoryFabric(mode=auto) 读取生效。",
+      "required_capabilities": [
+        "memory_recall_defaults_schema",
+        "promotion_apply",
+        "env_override_path"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/memory/recall_defaults.py",
+          "quentin/memory/fabric.py",
+          "quentin/l3/research/interface.py"
+        ],
+        "trace_capability_id": "memory_recall_promotion",
+        "trace_signals": [
+          {"event_type": "execution", "trace_id": "memory_recall_promotion", "payload": {"action": "promotion_evidence"}}
+        ],
+        "experiment_capability": "memory_recall_promotion"
+      }
+    },
+    {
+      "id": "L2.immune_loop",
+      "name": "免疫循环 ImmuneLoop",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "loop",
+      "description": "监控错误率/延迟/成本，发现异常后降级或触发自编程/实验。",
+      "required_capabilities": [
+        "anomaly_detection",
+        "auto_degrade",
+        "create_immune_case",
+        "link_to_selfprog"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/loops/immune_loop.py"
+        ],
+        "trace_capability_id": "immune_loop",
+        "experiment_capability": "immune_loop"
+      }
+    },
+    {
+      "id": "L2.sleep_loop",
+      "name": "睡眠循环 SleepLoop & 记忆巩固",
+      "layer": "L2_meta",
+      "phase": "phase3_skill_evolution",
+      "category": "loop",
+      "description": "批量处理 Trace，抽取知识/技能，升级 Memory 和 Skill Library。",
+      "required_capabilities": [
+        "trace_sampling",
+        "knowledge_summarization",
+        "skill_extraction",
+        "memory_consolidation"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/loops/sleep_loop.py"
+        ],
+        "trace_capability_id": "sleep_loop",
+        "experiment_capability": "sleep_loop"
+      }
+    },
+    {
+      "id": "L2.eval_harness",
+      "name": "Eval Harness（离线/在线评测）",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "eval",
+      "description": "统一评测入口，支持 A/B 测试、指标聚合与落盘。",
+      "required_capabilities": [
+        "run_suite",
+        "aggregate_metrics",
+        "persist_results"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/l3/research/eval_harness.py"
+        ],
+        "trace_capability_id": "eval_harness",
+        "trace_signals": [
+          {"event_type": "execution", "trace_id": "eval_harness", "payload": {"action": "eval_evidence"}}
+        ],
+        "experiment_capability": "eval_harness"
+      }
+    },
+    {
+      "id": "L2.observability_overview",
+      "name": "Observability Overview",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "observability",
+      "description": "提供研究/运行指标概览（tasks/tools/memory/patches/experiments）。",
+      "required_capabilities": [
+        "get_overview",
+        "stable_schema",
+        "offline_read"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/observability/service.py"
+        ],
+        "trace_capability_id": "observability_overview",
+        "trace_signals": [
+          {"event_type": "execution", "trace_id": "observability_overview", "payload": {"action": "overview_evidence"}}
+        ],
+        "experiment_capability": "observability_overview"
+      }
+    },
+    {
+      "id": "L3.self_programming_engine",
+      "name": "自编程引擎 SelfProgrammingEngine",
+      "layer": "L3_research_evolution",
+      "phase": "phase4_self_programming",
+      "category": "self_programming",
+      "description": "自动生成代码 Patch，跑测试，多 AI 审批后写入 mutable 模块。",
+      "required_capabilities": [
+        "generate_patch_candidate",
+        "run_tests",
+        "patch_gate_council",
+        "apply_patch_with_backup"
+      ],
+      "hints": {
+        "modules": [
+          "meta_agent/self_programming/engine_v2.py",
+          "meta_agent/patchflow/orchestrator.py",
+          "meta_agent/patches/store.py"
+        ],
+        "trace_capability_id": "self_programming_engine",
+        "trace_signals": [
+          {"event_type": "self_programming", "trace_id": "self-prog-cycle", "payload": {"action": "cycle_start"}}
+        ],
+        "experiment_capability": "self_programming:code_patch"
+      }
+    },
+    {
+      "id": "L3.evolution_strategy_manager",
+      "name": "Evolution Strategy Manager",
+      "layer": "L3_research_evolution",
+      "phase": "phase5_research_meta_optimization",
+      "category": "research",
+      "description": "选择改哪里、怎么改（基于指标/差距/预算），驱动下一步自我改进。",
+      "required_capabilities": [
+        "prioritize_sections",
+        "select_actions",
+        "record_strategy"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/l3/research/evolution_strategy.py",
+          "quentin/l3/research/evolution.py"
+        ],
+        "trace_capability_id": "evolution_strategy",
+        "trace_signals": [
+          {"event_type": "execution", "trace_id": "evolution_strategy", "payload": {"action": "strategy_evidence"}}
+        ],
+        "experiment_capability": "evolution_strategy"
+      }
+    },
+    {
+      "id": "L3.budget_controller",
+      "name": "Budget & Cost Controller",
+      "layer": "L3_research_evolution",
+      "phase": "phase5_research_meta_optimization",
+      "category": "research",
+      "description": "控制 Token/成本预算，避免自演化失控消耗。",
+      "required_capabilities": [
+        "budget_profile",
+        "check_and_reserve",
+        "audit_budget"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/l3/research/budget.py",
+          "quentin/l3/research/budget_controller.py"
+        ],
+        "trace_capability_id": "budget_controller",
+        "trace_signals": [
+          {"event_type": "decision", "trace_id": "budget_controller", "payload": {"action": "budget_evidence"}}
+        ],
+        "experiment_capability": "budget_controller"
+      }
+    },
+    {
+      "id": "L3.research_manager",
+      "name": "Research Layer & Experiment Manager",
+      "layer": "L3_research_evolution",
+      "phase": "phase2_eval_experiments",
+      "category": "research",
+      "description": "统一管理实验、Variant、指标和结果导出，支持 A/B 测试。",
+      "required_capabilities": [
+        "create_experiment",
+        "record_run",
+        "compare_variants",
+        "export_results"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/l3/research/experiments.py",
+          "quentin/l3/research/interface.py"
+        ],
+        "trace_capability_id": "research_layer",
+        "trace_signals": [
+          {"event_type": "execution", "payload": {"action": "trace_span", "layer": "L3", "event": "promotion_decision"}}
+        ],
+        "experiment_capability": "research_layer"
+      }
+    },
+    {
+      "id": "L2.multi_ai_council",
+      "name": "多 AI 会议模式 MultiAICouncil",
+      "layer": "L2_meta",
+      "phase": "phase1_memory_reflexion",
+      "category": "multi_agent",
+      "description": "针对规划、反思、决策等关键步骤引入多角色模型协商，降低幻觉。",
+      "required_capabilities": [
+        "deliberate(question, context, mode)",
+        "support_roles_speed_safety_cost_domain",
+        "structured_output"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/llm/multi_council.py",
+          "quentin/llm/council_profiles.py"
+        ],
+        "trace_capability_id": "multi_ai_council",
+        "experiment_capability": "multi_ai_council"
+      }
+    },
+    {
+      "id": "L2.council_manager",
+      "name": "CouncilManager（多智能体协调）",
+      "layer": "L2_meta",
+      "phase": "phase1_memory_reflexion",
+      "category": "multi_agent",
+      "description": "固定角色配置的多智能体 council（planner/safety/cost 等），由 ModelRouter 路由成员调用。",
+      "required_capabilities": [
+        "load_councils_config",
+        "run_council",
+        "arbiter_merge"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/council/manager.py",
+          "config/councils.yaml"
+        ],
+        "trace_capability_id": "council_manager",
+        "trace_signals": [
+          {"event_type": "model_call", "trace_id": "council_manager", "payload": {"action": "council_evidence"}}
+        ],
+        "experiment_capability": "council_manager"
+      }
+    },
+    {
+      "id": "L2.goal_done_definition",
+      "name": "Goal & Definition-of-Done 模块",
+      "layer": "L2_meta",
+      "phase": "phase1_memory_reflexion",
+      "category": "control",
+      "description": "统一描述任务目标和 Definition-of-Done，支持多 AI 会议评估任务是否完成。",
+      "required_capabilities": [
+        "goal_spec_schema",
+        "done_check_api",
+        "multi_ai_done_council"
+      ],
+      "hints": {
+        "modules": [
+          "quentin/goals/done_definition.py"
+        ],
+        "trace_capability_id": "goal_done_definition",
+        "experiment_capability": "goal_done_definition"
+      }
+    }
+  ]
+}

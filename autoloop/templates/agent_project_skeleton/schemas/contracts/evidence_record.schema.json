@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EvidenceRecord",
+  "type": "object",
+  "required": [
+    "workflow_id",
+    "phase_id",
+    "primary_failure_type",
+    "terminal_state",
+    "failure_events",
+    "event_log_file"
+  ],
+  "properties": {
+    "workflow_id": {
+      "type": "string"
+    },
+    "phase_id": {
+      "type": "string"
+    },
+    "primary_failure_type": {
+      "type": "string"
+    },
+    "terminal_state": {
+      "type": "string"
+    },
+    "failure_events": {
+      "type": "array"
+    },
+    "event_log_file": {
+      "type": "string"
+    }
+  }
+}

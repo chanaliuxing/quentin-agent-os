@@ -1,0 +1,8 @@
+version: "1.0.0"
+schemas:
+  Constraint:
+    type: object
+    properties:
+      action_type: {type: string}
+      forbidden_scope: {type: array, items: {type: string}}
+      risk_level: {type: string}

@@ -1,0 +1,76 @@
+repo_root: .
+blueprint_path: ./blueprint.md
+worktree_root: worktrees
+tasks_per_phase_per_agent: 3
+resume_timeout_seconds: 5400
+max_retries_per_agent: 2
+retry_backoff_seconds: 8
+session_rotation:
+  enabled: true
+  rotate_every_phases: 1
+  summary_source: results_md
+git_strategy:
+  use_worktree_branches: true
+  base_branch: main
+  integration_branch: integration/autoloop
+  agent_branch_prefix: agent
+phase_verify_commands:
+  - python scripts/qa/arch_ci_gate.py --repo-root . --allowlist config/arch_ci_gate_allowlist.json
+  - python -m pytest tests/unit/test_arch_ci_gate.py -q
+codex_command:
+  - codex
+  - exec
+  - resume
+codex_extra_args:
+  - --json
+  - --dangerously-bypass-approvals-and-sandbox
+agents:
+  - name: memory
+    role: Memory Layer Agent
+    session_id: 019c7f40-aaf8-7443-a401-6410cffee664
+    keep_session: true
+    workdir: worktrees/memory-agent
+    init_prompt_file: autoloop/prompts/memory_init.md
+    keywords: [memory, sts, mts, lts, gist, retrieval, store, recall, consolidation]
+  - name: planning
+    role: Planning Orchestration Agent
+    session_id:
+    keep_session: false
+    workdir: worktrees/planning-agent
+    init_prompt_file: autoloop/prompts/planning_init.md
+    keywords: [plan, planner, decomposition, goal, council, strategy, routing, backlog]
+  - name: execution
+    role: Cognitive Execution Agent
+    session_id:
+    keep_session: false
+    workdir: worktrees/execution-agent
+    init_prompt_file: autoloop/prompts/execution_init.md
+    keywords: [executor, runtime, lane, session, trace, run_task, cognitive_loop, attempt]
+  - name: tools
+    role: Toolchain & MCP Agent
+    session_id:
+    keep_session: false
+    workdir: worktrees/tools-agent
+    init_prompt_file: autoloop/prompts/tools_init.md
+    keywords: [tool, mcp, plugin, provider, schema, middleware, tool_manager, pack, adapter]
+  - name: protocol
+    role: Session/Event/Streaming Protocol Agent
+    session_id:
+    keep_session: false
+    workdir: worktrees/protocol-agent
+    init_prompt_file: autoloop/prompts/protocol_init.md
+    keywords: [session, event, stream, protocol, compaction, delta, transcript, silent]
+  - name: safety
+    role: Safety & Governance Agent
+    session_id:
+    keep_session: false
+    workdir: worktrees/safety-agent
+    init_prompt_file: autoloop/prompts/safety_init.md
+    keywords: [safety, policy, governance, immune, budget, approval, risk, guardrail]
+  - name: learning
+    role: Learning & Evolution Agent
+    session_id:
+    keep_session: false
+    workdir: worktrees/learning-agent
+    init_prompt_file: autoloop/prompts/learning_init.md
+    keywords: [learning, evolution, self_programming, eval, benchmark, improvement, skill, adaptation]

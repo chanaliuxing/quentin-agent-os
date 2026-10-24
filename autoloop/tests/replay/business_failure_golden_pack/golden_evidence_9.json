@@ -1,0 +1,11 @@
+{
+  "primary_failure_type": "BUSINESS_EVIDENCE_MISSING",
+  "first_failure_stage": "acceptance_contract_failed",
+  "missing_artifacts": [],
+  "grader_results": {
+    "contract_validator": "fail"
+  },
+  "failure_events": [],
+  "expected_signature": "business_evidence_missing:acceptance_contract_failed:grader:contract_validator:fail",
+  "expected_candidate_enum": "BUSINESS_EVIDENCE_MISSING_ACCEPTANCE_CONTRACT_FAILED_GRADER_CONTRACT_VALIDATOR_FAIL"
+}

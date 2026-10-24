@@ -1,0 +1,13 @@
+version: "1.0.0"
+schemas:
+  ToolCall:
+    type: object
+    properties:
+      tool_name: {type: string}
+      arguments: {type: object}
+  ToolResult:
+    type: object
+    properties:
+      success: {type: boolean}
+      output: {type: object}
+      error: {type: string}

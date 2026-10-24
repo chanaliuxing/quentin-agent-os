@@ -1,0 +1,694 @@
+blueprint:
+  id: "meta_agent_v3"
+  codename: "Project Quentin"
+  version: "3.0"
+  edition: "Research-Integrated"
+  description: >
+    Meta-Agent v3: a research-integrated, self-evolving AI operating system
+    with continual memory, self-programming, and experiment-friendly design.
+    元目标：在安全边界和可回滚前提下，让智能体在多领域中持续学习 / 自演化 / 自改代码。
+
+  goals:
+    - id: g.continual_memory
+      text: >
+        Provide a continual, multi-tier memory system (STS/MTS/LTS) that can run long-term
+        without stuffing all history into a single LLM context.
+    - id: g.self_programming
+      text: >
+        Provide a self-programming engine that can generate code candidates, run tests,
+        evaluate benefits/risks, and manage code patches under safety constraints.
+    - id: g.research_friendly
+      text: >
+        Provide clear experiment interfaces for all main loops (cognitive / immune /
+        sleep / skill&code evolution) with well-defined inputs/outputs/metrics, so new
+        algorithms can be plugged in and compared.
+
+  non_goals:
+    - id: ng.full_autonomy_without_oversight
+      text: "Do NOT pursue a fully unsupervised system without any governance or kill switch."
+    - id: ng.modify_kernel_schema
+      text: "AI must NOT modify the safety kernel or core schema definitions at runtime."
+    - id: ng.solve_all_research
+      text: "Do NOT aim to solve multi-agent game theory or full architecture search in v3."
+
+  design_principles:
+    - "trace_everything: 无 Trace 不执行"
+    - "kernel_vs_mutable: 安全内核与可自改模块严格分区"
+    - "sandbox_first: 所有自演化实验从 sandbox 起步"
+    - "governance_first: 所有自改决策经过 AI 治理层（多智能体 + 宪法）"
+
+layers:
+  - id: L0
+    name: "Infra & Kernel Layer"
+    description: "安全内核 / 存储 / 运行时。不可由自编程引擎修改。"
+    modules:
+      - id: safety_kernel
+        path: "quentin.kernel.safety.SafetyKernel"
+      - id: storage_kv
+        path: "quentin.infra.storage.kv_store.KVStore"
+      - id: runtime
+        path: "quentin.runtime.agent_runtime.AgentRuntime"
+    capabilities:
+      - "kernel_safety"
+      - "storage"
+      - "runtime"
+
+  - id: L1
+    name: "Base Layer (Execution Layer)"
+    description: "执行层：认知循环 / 记忆 / 技能 / 工具 / 模型路由。"
+    modules:
+      - id: cognitive_loop
+        path: "quentin.cognitive.loop.CognitiveLoop"
+      - id: planner
+        path: "quentin.planning.planner.HierarchicalPlanner"
+      - id: executor
+        path: "quentin.execution.executor.Executor"
+      - id: critic
+        path: "quentin.critic.critic.Critic"
+      - id: memory_fabric
+        path: "quentin.memory.fabric.MemoryFabric"
+      - id: trace_store
+        path: "quentin.traces.episode_builder.TraceEpisodeBuilder"
+      - id: skill_library
+        path: "quentin.skills.library.SkillLibrary"
+      - id: skill_miner
+        path: "quentin.skills.miner.SkillMiner"
+      - id: sleep_loop
+        path: "quentin.sleep.loop.SleepLoop"
+      - id: immune_loop
+        path: "quentin.immune.loop.ImmuneLoop"
+      - id: model_router
+        path: "quentin.models.router.ModelRouter"
+      - id: tool_manager
+        path: "quentin.tools.manager.ToolManager"
+    capabilities:
+      - "cognitive_loop"
+      - "memory_fabric"
+      - "skill_evolution"
+      - "immune_loop"
+      - "sleep_loop"
+      - "model_routing"
+      - "tool_lifecycle"
+
+  - id: L2
+    name: "Meta Layer (Evaluation & Self-Improvement)"
+    description: "评估、自改调度、多智能体协调层。"
+    modules:
+      - id: log_metrics_store
+        path: "quentin.infra.logging.Tracer"
+      - id: eval_harness
+        path: "quentin.evaluation.harness.EvalHarness"
+      - id: self_improvement_manager
+        path: "quentin.self_programming.manager.SelfImprovementManager"
+      - id: multi_agent_coordinator
+        path: "quentin.agents.coordinator.MultiAgentCoordinator"
+    capabilities:
+      - "eval_harness"
+      - "self_improvement"
+      - "multi_agent"
+
+  - id: L3
+    name: "Research & Evolution Layer"
+    description: "研究与演化策略层：实验编排 / 进化策略 / 资源预算 / 治理策略。"
+    modules:
+      - id: experiment_orchestrator
+        path: "quentin.research.experiment_orchestrator.ExperimentOrchestrator"
+      - id: evolution_strategy
+        path: "quentin.research.evolution_strategy.EvolutionStrategyManager"
+      - id: budget_controller
+        path: "quentin.research.budget.BudgetController"
+      - id: policy_engine
+        path: "quentin.research.policy.PolicyEngine"
+      - id: governance_council
+        path: "quentin.governance.council.GovernanceCouncil"
+      - id: constitution
+        path: "quentin.governance.constitution.Constitution"
+    capabilities:
+      - "research_layer"
+      - "evolution_strategy"
+      - "budget_control"
+      - "policy_governance"
+      - "ai_governance_council"
+
+environments:
+  sandbox:
+    description: "100% 实验环境，允许自编程自由试验。不可连接真实外部系统。"
+    allowed_auto_patches: "all_mutable"
+    risk_level: "low"
+    traffic: "offline_or_simulated"
+  staging:
+    description: "小流量联机验证环境，用于验证 patch 在真实数据上的效果。"
+    allowed_auto_patches: "governance_approved"
+    risk_level: "medium"
+    traffic: "shadow_or_canary"
+  production:
+    description: "正式生产环境，连接真实任务/系统。"
+    allowed_auto_patches: "none_without_human_or_strict_policy"
+    risk_level: "high"
+    traffic: "real"
+    constraints:
+      - "no_auto_patch_without_governance_approval_and_policy_whitelist"
+      - "no_mutation_of_kernel_or_schema"
+
+memory_fabric:
+  tiers:
+    - id: STS
+      name: "Short-Term Store"
+      scope: "session_or_task_level"
+      retention_hint: "minutes_to_hours"
+    - id: MTS
+      name: "Mid-Term Store"
+      scope: "project_or_version_level"
+      retention_hint: "days_to_weeks"
+    - id: LTS
+      name: "Long-Term Store"
+      scope: "cross_project_knowledge"
+      retention_hint: "weeks_to_years"
+
+  record_schema:
+    path: "quentin.memory.schemas.MemoryRecord"
+    fields:
+      - "id"
+      - "tier"
+      - "kind"          # episodic | semantic | procedural
+      - "content"
+      - "meta"
+      - "importance"
+      - "usage_count"
+      - "update_policy"
+      - "created_at"
+      - "updated_at"
+
+  update_policy:
+    default:
+      promotion_rule: "simple_usage_and_importance"   # 可被自定义算法替换
+      decay_rule: "low_importance_and_low_usage"
+      consolidation_batch: "nightly"
+    notes: >
+      实现上允许不同算法插拔，请求方只需满足：能在预算内对 MemoryRecord
+      进行 tier 升降级 / 标记衰减。
+
+loops:
+  cognitive_loop:
+    id: "loop.cognitive"
+    description: "实时任务执行闭环。接任务 → 拆解计划 → 执行 → 反思 → 写记忆。"
+    inputs:
+      - "tasks from orchestrator"
+      - "current context / memory hits"
+    outputs:
+      - "execution_trace_spans"
+      - "execution_summary"
+      - "lessons_learned"
+      - "episodic_memory_entries"
+    metrics:
+      - "task_success_rate"
+      - "avg_latency"
+      - "avg_token_cost"
+      - "error_rate"
+    requirements:
+      - id: cog.trace_required
+        text: "每个步骤必须写 TraceSpan（无 Trace 不执行）"
+      - id: cog.summary_required
+        text: "任务结束必须生成 execution_summary"
+      - id: cog.lessons_optional
+        text: "lessons_learned 可选，但应支持 Critic 生成反思"
+
+  immune_loop:
+    id: "loop.immune"
+    description: "异常检测与止损：监控错误 / 成本 / 延迟，触发降级与案例记录。"
+    inputs:
+      - "metrics_stream"
+      - "observed_errors"
+    outputs:
+      - "immune_cases"
+      - "degradation_actions"
+      - "signals_for_research_layer"
+    metrics:
+      - "immune_cases_count"
+      - "downgrade_events"
+      - "recovery_time"
+    requirements:
+      - id: imm.anomaly_detection
+        text: "实现至少一种异常检测逻辑（统计 or ML）"
+      - id: imm.degradation_actions
+        text: "支持自动降级（关闭自改 / 切回稳定版本）"
+      - id: imm.case_packaging
+        text: "异常期 Trace 打包成 ImmuneCase，供研究层分析"
+
+  sleep_loop:
+    id: "loop.sleep"
+    description: "周期性巩固记忆 / 提取技能 / 生成训练数据。"
+    inputs:
+      - "trace_spans"
+      - "memory_records"
+      - "episodes"
+    outputs:
+      - "new_semantic_memory"
+      - "new_procedural_memory"
+      - "skill_candidates"
+      - "training_pairs"
+    metrics:
+      - "episodes_processed"
+      - "skills_mined"
+      - "memory_promotions"
+      - "memory_decays"
+    requirements:
+      - id: sleep.schedule
+        text: "支持配置周期（daily / weekly / manual）"
+      - id: sleep.budget
+        text: "支持资源预算（最大处理 trace 数量 / token 上限）"
+      - id: sleep.skill_output
+        text: "输出可被 SkillLibrary 接受的 SkillDefinition 结构"
+
+  skill_code_evolution_loop:
+    id: "loop.skill_code_evolution"
+    description: "技能与代码进化循环：从高质量 Trace 提炼技能、生成/替换代码。"
+    inputs:
+      - "high_success_traces"
+      - "immune_flagged_modules"
+    outputs:
+      - "new_skills"
+      - "skill_supersedes"
+      - "code_patches"
+      - "patch_reports"
+    metrics:
+      - "skills_generated"
+      - "patches_proposed"
+      - "patches_accepted"
+      - "patches_rolled_back"
+    requirements:
+      - id: evol.pattern_mining
+        text: "SkillMiner 应支持从 TraceEpisode 中抽象可重用模式"
+      - id: evol.comparison
+        text: "EvalHarness 应支持新旧技能/代码的对比评测"
+      - id: evol.supersedes
+        text: "对替换掉的技能/模块保留 supersedes 记录"
+
+capabilities:
+  memory_fabric:
+    layer: "L1"
+    category: "memory"
+    description: "三层记忆系统 + 巩固 / 衰减 + 向量检索接口。"
+    components:
+      - "quentin.memory.schemas.MemoryRecord"
+      - "quentin.memory.fabric.MemoryFabric"
+    requirements:
+      - id: mf.tiered_memory
+        type: "functional"
+        description: "支持 STS/MTS/LTS 三层记忆，记录 MemoryRecord.tier。"
+      - id: mf.search_semantic
+        type: "functional"
+        description: "支持语义检索接口（可基于向量库或混合检索实现）。"
+      - id: mf.consolidation_policy
+        type: "functional"
+        description: "支持插拔式巩固策略（Usage+Importance 等）。"
+      - id: mf.cross_domain
+        type: "functional"
+        description: "MemoryRecord.meta.domain 支持 cross-domain 标记。"
+      - id: mf.size_control
+        type: "non_functional"
+        description: "提供监控和限制，避免记忆库无节制膨胀。"
+    metrics:
+      - "mf.total_records"
+      - "mf.records_by_tier"
+      - "mf.hit_rate"
+      - "mf.decay_events"
+    definition_of_done:
+      - "MemoryFabric 支持 STS/MTS/LTS tier，并能在 SleepLoop 中完成晋级/衰减。"
+      - "search() 支持至少一种语义检索实现（不再仅限 substring）。"
+      - "Observability 中可查看不同 tier 的规模与命中率。"
+
+  cognitive_loop:
+    layer: "L1"
+    category: "loop"
+    description: "认知循环：任务执行与即时反思。"
+    components:
+      - "quentin.cognitive.loop.CognitiveLoop"
+      - "quentin.planning.planner.HierarchicalPlanner"
+      - "quentin.execution.executor.Executor"
+      - "quentin.critic.critic.Critic"
+    requirements:
+      - id: cog.plan_hierarchical
+        type: "functional"
+        description: "Planner 支持分层计划（子任务树），而非单步 plan。"
+      - id: cog.memory_integration
+        type: "functional"
+        description: "任务执行前可从 MemoryFabric 检索相关记忆并注入上下文。"
+      - id: cog.critic_reflexion
+        type: "functional"
+        description: "Critic 支持 LLM-based Reflexion，生成结构化错误分析。"
+      - id: cog.trace_full
+        type: "non_functional"
+        description: "每个步骤都有 TraceSpan，TraceEpisodeBuilder 能重建执行轨迹。"
+    metrics:
+      - "cog.success_rate"
+      - "cog.avg_steps_per_task"
+      - "cog.retry_rate"
+      - "cog.trace_spans_per_task"
+    definition_of_done:
+      - "CognitiveLoop 能在至少一个 demo 域上完成多步任务（含失败→重试）。"
+      - "Critic 能基于 Trace 输出 lessons_learned 并写入 MemoryFabric。"
+
+  immune_loop:
+    layer: "L1"
+    category: "loop"
+    description: "免疫循环：异常检测与降级。"
+    components:
+      - "quentin.immune.schemas.ImmuneCase"
+      - "quentin.immune.loop.ImmuneLoop"
+    requirements:
+      - id: imm.stats_detector
+        type: "functional"
+        description: "支持基于统计阈值的异常检测（error/cost/latency）。"
+      - id: imm.degradation_mechanism
+        type: "functional"
+        description: "能触发降级动作：关闭自改、切回上一稳定策略等。"
+      - id: imm.case_generation
+        type: "functional"
+        description: "能从异常期 Trace 生成 ImmuneCase 交 ResearchLayer 使用。"
+    metrics:
+      - "imm.anomaly_events"
+      - "imm.degradation_actions"
+      - "imm.recovery_time"
+    definition_of_done:
+      - "ImmuneLoop 能在简单基线下自动检测『异常高错误率』并触发降级。"
+
+  sleep_loop:
+    layer: "L1"
+    category: "loop"
+    description: "睡眠循环：记忆巩固 / 技能提炼 / 训练数据生成。"
+    components:
+      - "quentin.sleep.loop.SleepLoop"
+      - "quentin.traces.episode_builder.TraceEpisodeBuilder"
+      - "quentin.skills.miner.SkillMiner"
+    requirements:
+      - id: sleep.episodes_from_spans
+        type: "functional"
+        description: "支持从 TraceSpan 聚合成 TraceEpisode。"
+      - id: sleep.skill_mining
+        type: "functional"
+        description: "SkillMiner 能从 episodes 生成初步的技能候选（即便简单）。"
+      - id: sleep.memory_consolidation
+        type: "functional"
+        description: "调用 MemoryFabric.consolidate_once 完成 tier 晋级/衰减。"
+    metrics:
+      - "sleep.episodes_processed"
+      - "sleep.skills_mined"
+      - "sleep.memory_promotions"
+    definition_of_done:
+      - "能手动/定时触发 SleepLoop 并看到至少有 skill/memory 被更新。"
+
+  skill_evolution:
+    layer: "L1"
+    category: "skill"
+    description: "技能生命周期管理与进化。"
+    components:
+      - "quentin.skills.schemas.SkillDefinition"
+      - "quentin.skills.library.SkillLibrary"
+      - "quentin.skills.miner.SkillMiner"
+    requirements:
+      - id: skill.library_crud
+        type: "functional"
+        description: "SkillLibrary 支持 CRUD 与启用/禁用。"
+      - id: skill.supersedes
+        type: "functional"
+        description: "支持记录 skill 之间的 supersedes 关系。"
+      - id: skill.usage_stats
+        type: "functional"
+        description: "记录 skill 被调用次数、成功率等 performance_stats。"
+    metrics:
+      - "skill.total"
+      - "skill.active"
+      - "skill.supersedes_relations"
+    definition_of_done:
+      - "在运行数周后，SkillLibrary 中出现系统自动合成的技能并被实际调用。"
+
+  model_routing:
+    layer: "L1"
+    category: "model"
+    description: "模型路由策略：为不同任务/域选择合适 LLM。"
+    components:
+      - "quentin.models.router.ModelRouter"
+    requirements:
+      - id: mr.register_models
+        type: "functional"
+        description: "支持注册多个模型及其成本/延迟/归属域等信息。"
+      - id: mr.usage_tracking
+        type: "functional"
+        description: "记录每个模型调用次数 / token / 成功率等。"
+      - id: mr.strategy_pluggable
+        type: "functional"
+        description: "路由策略可被 SleepLoop/ResearchLayer 数据驱动更新。"
+    metrics:
+      - "mr.calls_per_model"
+      - "mr.cost_per_model"
+      - "mr.success_rate_per_model"
+    definition_of_done:
+      - "ModelRouter 能基于简单策略为不同任务选择模型，并在 observability 中展示使用统计。"
+
+  multi_agent:
+    layer: "L2"
+    category: "agent"
+    description: "多智能体协作与决策。"
+    components:
+      - "quentin.agents.roles.BaseRoleAgent"
+      - "quentin.agents.roles.default_roles"
+      - "quentin.agents.coordinator.MultiAgentCoordinator"
+    requirements:
+      - id: ma.roles_fixed
+        type: "functional"
+        description: "支持固定基础角色：Speed/Safety/Cost/Domain-Expert。"
+      - id: ma.multi_view
+        type: "functional"
+        description: "MultiAgentCoordinator 能对同一输入生成多视角输出。"
+      - id: ma.aggregation
+        type: "functional"
+        description: "支持聚合多视角输出（投票 / Scoring 等）。"
+    metrics:
+      - "ma.views_per_decision"
+      - "ma.role_usage"
+    definition_of_done:
+      - "至少在一个 demo 场景中，多角色产生不同建议，并由 coordinator 给出汇总决策。"
+
+  eval_harness:
+    layer: "L2"
+    category: "evaluation"
+    description: "统一评测框架：offline dataset + online A/B 测试接口。"
+    components:
+      - "quentin.evaluation.harness.EvalHarness"
+    requirements:
+      - id: eval.offline_dataset
+        type: "functional"
+        description: "支持注册固定评测数据集，用于 offline 评估。"
+      - id: eval.metric_registry
+        type: "functional"
+        description: "支持注册评测指标（success_rate / latency / cost / risk 等）。"
+      - id: eval.module_hooks
+        type: "functional"
+        description: "支持对不同模块（planner/critic/router等）挂 eval 钩子。"
+      - id: eval.ab_test
+        type: "functional"
+        description: "支持简单的 online A/B 测试接口。"
+    metrics:
+      - "eval.runs"
+      - "eval.datasets_registered"
+      - "eval.metrics_registered"
+    definition_of_done:
+      - "EvalHarness 能对至少一个模块在固定数据集上输出评测结果。"
+
+  self_programming:
+    layer: "L2"
+    category: "self_programming"
+    description: "可验证自编程引擎：生成 patch → 测试 → 评估 → 报告。"
+    components:
+      - "quentin.self_programming.engine.SelfProgrammingEngine"
+      - "quentin.self_programming.schemas.CodePatch"
+      - "quentin.self_programming.manager.SelfImprovementManager"
+    requirements:
+      - id: sp.patch_generation
+        type: "functional"
+        description: "支持根据任务描述生成代码 patch 草稿（未来接入 LLM）。"
+      - id: sp.test_integration
+        type: "functional"
+        description: "支持调用 pytest 等单元测试框架。"
+      - id: sp.static_analysis
+        type: "functional"
+        description: "集成至少一种静态分析工具。"
+      - id: sp.patch_report
+        type: "functional"
+        description: "为每个 patch 生成结构化 PatchReport（覆盖率/指标/风险）。"
+      - id: sp.mutation_scope
+        type: "safety"
+        description: "仅允许修改 /mutable 下标记为 auto_updatable 的模块。"
+    metrics:
+      - "sp.patches_proposed"
+      - "sp.patches_applied"
+      - "sp.patches_rolled_back"
+      - "sp.test_pass_rate"
+    definition_of_done:
+      - "至少一个 /mutable 工具模块可以被自编程引擎自动生成 patch 并通过测试后应用到 sandbox。"
+
+  research_layer:
+    layer: "L3"
+    category: "research"
+    description: "研究与演化策略层：实验编排 / 策略选择 / 资源预算 / 治理策略。"
+    components:
+      - "quentin.research.experiment_schemas.ExperimentConfig"
+      - "quentin.research.experiment_orchestrator.ExperimentOrchestrator"
+      - "quentin.research.evolution_strategy.EvolutionStrategyManager"
+      - "quentin.research.budget.BudgetController"
+      - "quentin.research.policy.PolicyEngine"
+    requirements:
+      - id: rl.create_experiment
+        type: "functional"
+        description: "支持 create_experiment(config, variants)。"
+      - id: rl.run_experiment
+        type: "functional"
+        description: "支持 run_experiment，并产出对比结果。"
+      - id: rl.evolution_priority
+        type: "functional"
+        description: "EvolutionStrategyManager 能根据指标选择优先优化模块。"
+      - id: rl.budgeting
+        type: "functional"
+        description: "BudgetController 跟踪并限制算力 / token / 资金消耗。"
+    metrics:
+      - "rl.experiments_created"
+      - "rl.experiments_completed"
+      - "rl.high_yield_experiments"
+    definition_of_done:
+      - "可以对至少一个模块（例如 planner）发起实验，对比新旧策略效果并返回结果。"
+
+  ai_governance_council:
+    layer: "L3"
+    category: "governance"
+    description: "AI 治理委员会：基于宪法和目标，对 patch/实验做多智能体协商决策。"
+    components:
+      - "quentin.governance.constitution.Constitution"
+      - "quentin.governance.council.GovernanceCouncil"
+      - "quentin.agents.coordinator.MultiAgentCoordinator"
+    requirements:
+      - id: gov.constitution_parsing
+        type: "functional"
+        description: "能从 YAML 解析宪法和各域目标。"
+      - id: gov.multi_agent_review
+        type: "functional"
+        description: "对 patch/experiment 调用多角色 Agent 给出意见。"
+      - id: gov.decision_rule
+        type: "functional"
+        description: "基于多视角输出聚合出 decision: approve/reject/revise。"
+      - id: gov.traceability
+        type: "non_functional"
+        description: "所有决策过程有 TraceSpan 可审计。"
+    metrics:
+      - "gov.reviews"
+      - "gov.approvals"
+      - "gov.rejections"
+    definition_of_done:
+      - "至少一种情景下，patch 决策完全由 AI 治理委员会做出（人类只看报告）。"
+
+domains:
+  generic:
+    risk_level: "low"
+    goals:
+      - "maximize_learning"
+      - "increase_blueprint_coverage"
+  demo:
+    risk_level: "low"
+    goals:
+      - "provide_simple_tasks_for_evolution"
+  desktop:
+    risk_level: "medium"
+    goals:
+      - "automate_desktop_tasks_safely"
+  legal:
+    risk_level: "high"
+    goals:
+      - "correctness_and_compliance_first"
+  trading:
+    risk_level: "high"
+    goals:
+      - "risk_adjusted_return_under_drawdown_constraint"
+
+governance:
+  constitution_file: "governance/constitution.yaml"
+  global_principles:
+    - id: gp.no_irreversible_damage
+      text: "禁止执行无法回滚、且潜在伤害巨大的操作。"
+    - id: gp.obey_law
+      text: "遵守适用法律法规与平台条款。"
+    - id: gp.keep_auditability
+      text: "所有自改与决策必须有可追踪的 Trace 和 Patch 记录。"
+  kernel_protection:
+    no_modify_paths:
+      - "quentin.kernel"
+      - "quentin.memory.schemas"
+      - "quentin.traces.schemas"
+    notes: "这些模块不允许被自编程引擎修改。"
+
+experiments:
+  api:
+    create_experiment: "quentin.research.experiment_orchestrator.ExperimentOrchestrator.create_experiment"
+    run_experiment: "quentin.research.experiment_orchestrator.ExperimentOrchestrator.run_experiment"
+    compare_variants: "quentin.research.experiment_orchestrator.ExperimentOrchestrator.compare_variants"
+    export_results: "quentin.research.experiment_orchestrator.ExperimentOrchestrator.export_results"
+  typical_targets:
+    - "planner_strategy"
+    - "critic_mode"
+    - "model_routing_policy"
+    - "skill_selection_policy"
+    - "self_programming_pipeline"
+
+phases:
+  - id: phase0
+    name: "统一日志 + Trace + 最小骨架"
+    duration_hint: "1-2 months"
+    objectives:
+      - "搭建 kernel / mutable / domain 目录结构"
+      - "实现 Tracer + Trace schemas"
+      - "让 CognitiveLoop 最小版本能跑 demo 任务并写 Trace"
+  - id: phase1
+    name: "Memory Fabric v1 + 基础 Reflexion"
+    duration_hint: "2-4 months"
+    objectives:
+      - "MemoryFabric 支持 STS/MTS/LTS"
+      - "Critic 支持基础反思，失败→再想想→重试"
+  - id: phase2
+    name: "Eval Harness + 实验接口 v1"
+    duration_hint: "4-6 months"
+    objectives:
+      - "EvalHarness 支持 offline dataset 与简单 A/B"
+      - "能够对 planner 策略做小流量对比"
+  - id: phase3
+    name: "Skill Evolution v1"
+    duration_hint: "6-9 months"
+    objectives:
+      - "SkillMiner 从 Trace 中抽取可用技能"
+      - "SkillLibrary 中出现自动合成技能并被调用"
+  - id: phase4
+    name: "Self-Programming Engine v1"
+    duration_hint: "9-14 months"
+    objectives:
+      - "针对某个工具模块自动生成 patch + 测试"
+      - "在 sandbox 中自动调整代码并改善指标"
+  - id: phase5
+    name: "Research Layer & Meta-Optimization v1"
+    duration_hint: "14-18+ months"
+    objectives:
+      - "ExperimentOrchestrator 管理系统性实验"
+      - "EvolutionStrategyManager 能回答『哪些自改实验最有收益』"
+
+challenges:
+  - id: ch.continual_memory
+    text: "持续记忆 vs 上下文限制：如何避免碎片化与爆炸增长？"
+  - id: ch.self_programming_reliability
+    text: "自编程可靠性与边界：如何在测试不足时控制风险？"
+  - id: ch.safety_vs_autonomy
+    text: "自演化 vs 安全内核：如何在探索与可控之间平衡？"
+  - id: ch.cross_domain_transfer
+    text: "多领域知识迁移与隔离：如何共享经验又不扩散风险？"
+  - id: ch.evaluation_design
+    text: "评测体系：不同域如何抽象到统一的自改评分？"
+  - id: ch.human_bandwidth
+    text: "人类监督带宽：如何用有限决策点掌控大量自改实验？"
+  - id: ch.research_vs_production
+    text: "研究与生产共存：如何让实验不干扰生产，同时能迁移成果？"

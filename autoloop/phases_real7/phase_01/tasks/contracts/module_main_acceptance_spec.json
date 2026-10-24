@@ -1,0 +1,18 @@
+{
+  "contract_version": "1.0",
+  "acceptance_id": "acceptance_phase_01_module_main",
+  "task_id": "task_phase_01_module_main",
+  "required_tests": [
+    "unit",
+    "integration"
+  ],
+  "required_graders": [
+    "contract_validator"
+  ],
+  "required_artifacts": [
+    "app/module_main/artifacts/phase_01_result.json"
+  ],
+  "hidden_test_group": "core",
+  "rollback_on_failure": true,
+  "human_review_required": false
+}

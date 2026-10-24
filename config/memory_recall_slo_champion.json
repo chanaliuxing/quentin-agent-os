@@ -1,0 +1,42 @@
+{
+  "tiers": {
+    "300": {
+      "modes": {
+        "text_only": {
+          "p95_ms_max": 1200.0,
+          "avg_ms_max": 700.0,
+          "hit_rate_at_k_min": 0.9
+        },
+        "vector_only": {
+          "p95_ms_max": 1200.0,
+          "avg_ms_max": 700.0,
+          "hit_rate_at_k_min": 0.9
+        },
+        "hybrid": {
+          "p95_ms_max": 1500.0,
+          "avg_ms_max": 900.0,
+          "hit_rate_at_k_min": 0.3
+        }
+      }
+    },
+    "600": {
+      "modes": {
+        "text_only": {
+          "p95_ms_max": 1500.0,
+          "avg_ms_max": 900.0,
+          "hit_rate_at_k_min": 0.9
+        },
+        "vector_only": {
+          "p95_ms_max": 1500.0,
+          "avg_ms_max": 900.0,
+          "hit_rate_at_k_min": 0.9
+        },
+        "hybrid": {
+          "p95_ms_max": 1800.0,
+          "avg_ms_max": 1100.0,
+          "hit_rate_at_k_min": 0.3
+        }
+      }
+    }
+  }
+}

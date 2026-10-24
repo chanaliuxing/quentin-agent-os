@@ -1,0 +1,9 @@
+output_trust: untrusted
+id: GeminiCLIWrapper
+name: Gemini CLI Wrapper
+description: A tool plugin to interact with the local Gemini CLI.
+entrypoint: logic.py
+kind: tool
+risk_level: medium
+permissions: 
+domain: general

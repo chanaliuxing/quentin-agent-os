@@ -1,0 +1,18 @@
+{
+  "tool_dir": "extensions/tools/web_search",
+  "output": "generated/benchmarks/web_search_benchmark_report.json",
+  "previous_report": "generated/benchmarks/web_search_benchmark_prev.json",
+  "pass_score": 75,
+  "dimensions": {
+    "manifest": 20,
+    "logic_load": 20,
+    "contract": 20,
+    "functional": 30,
+    "quality": 10
+  },
+  "gates": {
+    "fail_on_critical_missing": true,
+    "must_not_regress": true,
+    "min_delta_for_improvement": 1.0
+  }
+}

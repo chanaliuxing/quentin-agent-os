@@ -1,0 +1,13 @@
+# Quentin Tool Plugin Manifest Template
+# Mandatory fields for kernel validation.
+# Usage: Copy this template and replace placeholders.
+
+id: "unique_tool_identifier"
+name: "Human Readable Tool Name"
+description: "Detailed description of tool functionality for the LLM planner."
+entrypoint: "logic:run" # Standard entrypoint: <module>:<function>
+kind: "external"       # external | internal | skill
+domain: "extensions"   # extensions | kernel | memory
+risk_level: "low"      # low | medium | high | critical
+output_trust: "untrusted" # trusted | untrusted
+permissions: []        # List of required tool permissions (e.g., shell.run_command)

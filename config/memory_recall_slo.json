@@ -1,0 +1,61 @@
+{
+  "tiers": {
+    "10000": {
+      "modes": {
+        "text_only": {
+          "p95_ms_max": 120.0,
+          "avg_ms_max": 80.0,
+          "hit_rate_at_k_min": 0.95
+        },
+        "vector_only": {
+          "p95_ms_max": 250.0,
+          "avg_ms_max": 180.0,
+          "hit_rate_at_k_min": 0.9
+        },
+        "hybrid": {
+          "p95_ms_max": 320.0,
+          "avg_ms_max": 220.0,
+          "hit_rate_at_k_min": 0.85
+        }
+      }
+    },
+    "100000": {
+      "modes": {
+        "text_only": {
+          "p95_ms_max": 350.0,
+          "avg_ms_max": 220.0,
+          "hit_rate_at_k_min": 0.92
+        },
+        "vector_only": {
+          "p95_ms_max": 800.0,
+          "avg_ms_max": 550.0,
+          "hit_rate_at_k_min": 0.85
+        },
+        "hybrid": {
+          "p95_ms_max": 950.0,
+          "avg_ms_max": 650.0,
+          "hit_rate_at_k_min": 0.8
+        }
+      }
+    },
+    "1000000": {
+      "modes": {
+        "text_only": {
+          "p95_ms_max": 1200.0,
+          "avg_ms_max": 850.0,
+          "hit_rate_at_k_min": 0.9
+        },
+        "vector_only": {
+          "p95_ms_max": 2600.0,
+          "avg_ms_max": 1800.0,
+          "hit_rate_at_k_min": 0.8
+        },
+        "hybrid": {
+          "p95_ms_max": 3000.0,
+          "avg_ms_max": 2100.0,
+          "hit_rate_at_k_min": 0.75
+        }
+      }
+    }
+  }
+}

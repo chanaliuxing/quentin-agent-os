@@ -1,0 +1,220 @@
+version: v3
+codename: Project Quentin / Research-Integrated Edition
+capabilities:
+- id: arch.layers.four-layer-logic
+  section: architecture
+  name: Four Logic Layers (L0-L3)
+  description: L0 Infra&Kernel, L1 Base, L2 Meta, L3 Research & Evolution as distinct
+    modules.
+  required: true
+  maturity_target: phase-0
+  notes: null
+- id: arch.envs.three-environments
+  section: architecture
+  name: Three Environments (sandbox/staging/prod)
+  description: Support sandbox, staging, production environments, all self-evolution
+    must start from sandbox.
+  required: true
+  maturity_target: phase-1
+  notes: null
+- id: arch.kernel.safety-kernel
+  section: architecture
+  name: Safety Kernel
+  description: Permission, rollback, audit and risk controls that cannot be modified
+    by self-programming.
+  required: true
+  maturity_target: phase-1
+  notes: null
+- id: memory.fabric.tiers
+  section: memory
+  name: Memory Fabric tiers
+  description: 'STS, MTS, LTS three-tier memory with explicit metadata: tier, kind,
+    importance, usage.'
+  required: true
+  maturity_target: phase-1
+  notes: null
+- id: memory.fabric.consolidation
+  section: memory
+  name: Memory consolidation from traces
+  description: Sleep loop that turns execution traces into episodic memories in STS/MTS.
+  required: true
+  maturity_target: phase-1
+  notes: null
+- id: memory.fabric.promotion-decay
+  section: memory
+  name: Memory promotion & decay rules
+  description: Periodic maintenance cycle to promote STS->MTS->LTS and decay stale
+    memories.
+  required: true
+  maturity_target: phase-2
+  notes: null
+- id: memory.fabric.cross-domain
+  section: memory
+  name: Cross-domain memory flag
+  description: Domain field with 'cross' type for reusable knowledge across domains.
+  required: true
+  maturity_target: phase-2
+  notes: null
+- id: loops.cognitive.trace-required
+  section: loops
+  name: Cognitive loop with mandatory trace
+  description: Every task execution must produce structured traces with status, steps,
+    metrics, summary.
+  required: true
+  maturity_target: phase-0
+  notes: null
+- id: loops.immune.anomaly-detector
+  section: loops
+  name: Immune loop anomaly detector
+  description: Monitor error rate/latency/cost/reward; detect anomalies and downgrade
+    features or rollback.
+  required: true
+  maturity_target: phase-2
+  notes: null
+- id: loops.sleep.consolidation
+  section: loops
+  name: Sleep loop consolidation
+  description: Periodic sleep loop that consolidates traces into memory and prepares
+    training pairs.
+  required: true
+  maturity_target: phase-1
+  notes: null
+- id: loops.skill-evolution.from-traces
+  section: loops
+  name: Skill & code evolution from successful traces
+  description: Mine patterns from high-success traces, synthesize skills, test them
+    and decide replace/coexist.
+  required: true
+  maturity_target: phase-3
+  notes: null
+- id: selfprog.patch-generation
+  section: self-programming
+  name: Patch generation for mutable modules
+  description: Generate code patches for modules under /mutable/ marked as auto_updatable.
+  required: true
+  maturity_target: phase-4
+  notes: null
+- id: selfprog.test-harness
+  section: self-programming
+  name: Patch test harness
+  description: Run unit tests, static analysis and simple regression before accepting
+    patch candidates.
+  required: true
+  maturity_target: phase-4
+  notes: null
+- id: selfprog.deployment-policy
+  section: self-programming
+  name: Patch deployment policy
+  description: Policy for when patches are allowed to move from sandbox to staging/shadow/prod.
+  required: true
+  maturity_target: phase-5
+  notes: null
+- id: multiagent.council.roles
+  section: multi-agent
+  name: Fixed roles in multi-agent council
+  description: Speed-Agent, Safety-Agent, Cost-Agent, Domain-Expert-Agent as fixed
+    basic roles.
+  required: true
+  maturity_target: phase-1
+  notes: null
+- id: multiagent.council.experimental-roles
+  section: multi-agent
+  name: Experimental agent roles
+  description: Allow new experimental roles to be introduced under ResearchLayer for
+    small-traffic tests.
+  required: true
+  maturity_target: phase-3
+  notes: null
+- id: routing.model-router.data-driven
+  section: multi-agent
+  name: Data-driven ModelRouter
+  description: Route tasks to models based on logged performance metrics and costs
+    (bandit/RL/SL).
+  required: true
+  maturity_target: phase-3
+  notes: null
+- id: domain.generic-adapter-interface
+  section: domains
+  name: Generic domain adapter interface
+  description: Domain adapters for Desktop/Legal/Trading etc share a common interface
+    (actions/tools + schema).
+  required: true
+  maturity_target: phase-2
+  notes: null
+- id: domain.cross-skill-reuse
+  section: domains
+  name: Cross-domain skill reuse
+  description: Skill definitions can be reused across domains where applicable, with
+    domain whitelist/blacklist.
+  required: true
+  maturity_target: phase-3
+  notes: null
+- id: obs.traces-metrics-logs
+  section: observability
+  name: Traces + metrics + logs
+  description: 'Unified observability: structured traces, metrics and logs across
+    all loops and layers.'
+  required: true
+  maturity_target: phase-0
+  notes: null
+- id: obs.eval-harness
+  section: observability
+  name: Eval Harness
+  description: Unified evaluation harness for offline/online metrics and A/B testing.
+  required: true
+  maturity_target: phase-2
+  notes: null
+- id: obs.dashboard-minimum
+  section: observability
+  name: Minimal dashboard or export for visualization
+  description: Export metrics and experiment results in a format easy to plug into
+    dashboards.
+  required: true
+  maturity_target: phase-3
+  notes: null
+- id: research.experiment-orchestrator
+  section: research
+  name: Experiment Orchestrator
+  description: Create experiments, run them across variants, compare variants and
+    export results.
+  required: true
+  maturity_target: phase-2
+  notes: null
+- id: research.auto-experiment-selection
+  section: research
+  name: Automatic experiment selection
+  description: Select which experiments to run per research cycle using an evolution
+    strategy manager.
+  required: true
+  maturity_target: phase-3
+  notes: null
+- id: research.budget-controller
+  section: research
+  name: Budget & cost controller
+  description: Limit experiments and runs per cycle according to research budget constraints.
+  required: true
+  maturity_target: phase-3
+  notes: null
+- id: blueprint.spec.machine-readable
+  section: blueprint
+  name: Machine-readable blueprint spec
+  description: Represent the blueprint (this file) in a structured, versioned format.
+  required: true
+  maturity_target: phase-0
+  notes: null
+- id: blueprint.gap-tracking
+  section: blueprint
+  name: Blueprint gap tracker
+  description: Compare blueprint capabilities against actual system capabilities to
+    locate gaps.
+  required: true
+  maturity_target: phase-1
+  notes: null
+- id: blueprint.auto-improvement-plans
+  section: blueprint
+  name: Automatic improvement plans
+  description: Generate improvement plans and experiments to close blueprint gaps
+    via LLM(s).
+  required: true
+  maturity_target: phase-3
+  notes: null

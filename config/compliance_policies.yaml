@@ -1,0 +1,17 @@
+retention:
+  audit_logs_days: 365
+  traces_days: 30
+  memory_snapshots_days: 90
+
+redaction:
+  enabled: true
+  mask_char: "*"
+  patterns:
+    - "api_key"
+    - "secret"
+    - "password"
+
+access_scope:
+  internal_only:
+    - "quentin/security/**"
+    - "config/auth_profiles.yaml"

@@ -1,0 +1,10 @@
+version: "1.0.0"
+schemas:
+  AuditEvent:
+    type: object
+    required: [event_id, actor, action, decision]
+    properties:
+      event_id: {type: string}
+      actor: {type: string}
+      action: {type: string}
+      decision: {type: string, enum: [allow, block]}

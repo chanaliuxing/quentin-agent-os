@@ -1,0 +1,11 @@
+{
+  "primary_failure_type": "AGENT_RESULT_PARSE_FAILED",
+  "first_failure_stage": "qa_contract_failed",
+  "missing_artifacts": [],
+  "grader_results": {},
+  "failure_events": [
+    {"cause_type": "AGENT_RESULT_PARSE_FAILED"}
+  ],
+  "expected_signature": "agent_result_parse_failed:qa_contract_failed:events:agent_result_parse_failed",
+  "expected_candidate_enum": "AGENT_RESULT_PARSE_FAILED_QA_CONTRACT_FAILED_EVENTS_AGENT_RESULT_PARSE_FAILED"
+}

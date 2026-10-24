@@ -1,0 +1,25 @@
+{
+  "record_id": "evidence_phase_01_20260307112829782617",
+  "run_id": "autoloop-project",
+  "phase_id": "phase_01",
+  "workflow_version": "convergence-v1",
+  "module_ids": [
+    "module_main"
+  ],
+  "base_sha": "84c5e27bd74c849c83dd5953e6936b5349b3d9b1",
+  "head_sha": "84c5e27bd74c849c83dd5953e6936b5349b3d9b1",
+  "acceptance_status": "rejected",
+  "test_status": "failed",
+  "missing_required_tests": [
+    "integration",
+    "unit"
+  ],
+  "grader_results": {
+    "contract_validator": "fail"
+  },
+  "changed_files": [],
+  "first_failure_stage": "dev_output_missing",
+  "failure_signature": "dev_output_missing:module_main",
+  "owner_agent": "dev",
+  "created_at": "2026-03-07T11:28:29.782810"
+}

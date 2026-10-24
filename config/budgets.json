@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "default": {
+      "daily_token_limit": 1000000000000,
+      "monthly_token_limit": 10000000000000,
+      "daily_usd_limit": 1000000.0,
+      "monthly_usd_limit": 10000000.0,
+      "hard_stop": false
+    },
+    "research": {
+      "daily_token_limit": 1000000000000,
+      "monthly_token_limit": 10000000000000,
+      "daily_usd_limit": 1000000.0,
+      "monthly_usd_limit": 10000000.0,
+      "hard_stop": false
+    }
+  },
+  "routing": {
+    "environment:sandbox": "research",
+    "environment:prod": "default"
+  }
+}

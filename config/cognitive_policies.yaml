@@ -1,0 +1,23 @@
+cognitive_policies:
+  # v3.1+ Perception & Context Layer
+  enable_situation_classifier: true
+  enable_attention_filter: true
+
+  # Predictive processing (executor-time); keep off until markers are reliable.
+  enable_expectation_engine: false
+
+  # Reflex execution; keep off by default, especially for high-risk domains.
+  enable_situation_to_skill: false
+
+  # Keep ~15% of context (heuristic v0).
+  attention_target_ratio: 0.15
+
+  # When predictive checks fail, fall back to deep planner path.
+  prediction_error_fallback_to_planner: true
+
+  # Debug: feed full context to planner (unsafe for noise); default false.
+  debug_use_full_context: false
+
+  # v3.1+: inject gist memories into planner context (small/top-k only).
+  enable_gist_injection: true
+  gist_top_k: 3

@@ -1,0 +1,11 @@
+{
+  "primary_failure_type": "AGENT_RUNNER_SESSION_DEGRADED",
+  "first_failure_stage": "module_pipeline_failed",
+  "missing_artifacts": [],
+  "grader_results": {},
+  "failure_events": [
+    {"cause_type": "AGENT_RUNNER_SESSION_DEGRADED"}
+  ],
+  "expected_signature": "agent_runner_session_degraded:module_pipeline_failed:events:agent_runner_session_degraded",
+  "expected_candidate_enum": "AGENT_RUNNER_SESSION_DEGRADED_MODULE_PIPELINE_FAILED_EVENTS_AGENT_RUNNER_SESSION_DEGRADED"
+}

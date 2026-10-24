@@ -1,0 +1,43 @@
+name: Evidence Audit Gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . pytest
+      - name: Run audit
+        run: |
+          python scripts/run_evidence_audit.py --spec blueprint/meta_agent_v3_spec.json --caps data/blueprint/capabilities.json --out data/blueprint/audit_report.json --delta-out data/blueprint/audit_delta.json --delta-from data/blueprint/audit_report.json
+      - name: Check gates
+        run: |
+          python - <<'PY'
+import json, sys, os
+report_path = "data/blueprint/audit_report.json"
+delta_path = "data/blueprint/audit_delta.json"
+if not os.path.exists(report_path):
+    print("audit report missing"); sys.exit(1)
+with open(report_path, "r", encoding="utf-8") as f:
+    rpt = json.load(f)
+errors = rpt.get("summary", {}).get("errors", [])
+if errors:
+    print("Errors present:", errors); sys.exit(1)
+# For regression check, if delta file exists and has status regressions implemented->partial/gap, fail
+if os.path.exists(delta_path):
+    d = json.load(open(delta_path, "r", encoding="utf-8"))
+    regressions = [c for c in d.get("status_changed", []) if c.get("from") == "implemented" and c.get("to") in ("gap", "partial")]
+    if regressions:
+        print("Implemented regressions found:", regressions); sys.exit(1)
+print("Gate passed.")
+PY

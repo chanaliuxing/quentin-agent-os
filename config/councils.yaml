@@ -1,0 +1,105 @@
+councils:
+  planner:
+    description: "Default planner council using local Ollama model"
+    decision_mode: arbiter_llm
+    members:
+      - member_id: planner_speed
+        router_mode: planner
+        router_task_type: planner
+        role: Speed-Agent
+        weight: 1.0
+      - member_id: planner_safety
+        router_mode: planner
+        router_task_type: planner
+        role: Safety-Agent
+        weight: 1.0
+      - member_id: planner_cost
+        router_mode: planner
+        router_task_type: planner
+        role: Cost-Agent
+        weight: 1.0
+      - member_id: planner_expert
+        router_mode: planner
+        router_task_type: planner
+        role: Domain-Expert-Agent
+        weight: 1.0
+    arbiter:
+      router_mode: planner
+      router_task_type: planner
+  done:
+    description: "Default done council using local Ollama model"
+    decision_mode: arbiter_llm
+    members:
+      - member_id: done_speed
+        router_mode: done
+        router_task_type: done
+        role: Speed-Agent
+        weight: 1.0
+      - member_id: done_safety
+        router_mode: done
+        router_task_type: done
+        role: Safety-Agent
+        weight: 1.0
+      - member_id: done_cost
+        router_mode: done
+        router_task_type: done
+        role: Cost-Agent
+        weight: 1.0
+      - member_id: done_expert
+        router_mode: done
+        router_task_type: done
+        role: Domain-Expert-Agent
+        weight: 1.0
+    arbiter:
+      router_mode: done
+      router_task_type: done
+  reflection:
+    description: "Default reflection council using local Ollama model"
+    decision_mode: arbiter_llm
+    members:
+      - member_id: reflection_speed
+        router_mode: reflection
+        router_task_type: reflection
+        role: Speed-Agent
+        weight: 1.0
+      - member_id: reflection_safety
+        router_mode: reflection
+        router_task_type: reflection
+        role: Safety-Agent
+        weight: 1.0
+      - member_id: reflection_cost
+        router_mode: reflection
+        router_task_type: reflection
+        role: Cost-Agent
+        weight: 1.0
+      - member_id: reflection_expert
+        router_mode: reflection
+        router_task_type: reflection
+        role: Domain-Expert-Agent
+        weight: 1.0
+    arbiter:
+      router_mode: reflection
+      router_task_type: reflection
+
+  tool_governance:
+    description: "Tool governance council (Risk veto + majority)"
+    decision_mode: arbiter_llm
+    members:
+      - member_id: tool_risk
+        router_mode: tool_governance
+        router_task_type: tool_governance
+        role: Risk-Agent
+        weight: 1.0
+      - member_id: tool_capability
+        router_mode: tool_governance
+        router_task_type: tool_governance
+        role: Capability-Agent
+        weight: 1.0
+      - member_id: tool_cost
+        router_mode: tool_governance
+        router_task_type: tool_governance
+        role: Cost-Agent
+        weight: 1.0
+    arbiter:
+      router_mode: tool_governance
+      router_task_type: tool_governance

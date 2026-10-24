@@ -1,0 +1,354 @@
+进入 P11 阶段。目标是“自治体系工业化运营（Industrialized Autonomous Operations）”：将 P0-P10 的能力标准化为可复制、可扩展、可监
+  管的“运营产品”。
+
+  阶段目标：
+  1. 建立运营控制塔（Operations Control Tower）。
+  2. 建立域模板工厂（Domain Blueprint Factory）。
+  3. 建立组织级变更治理流水线（Change Governance Pipeline）。
+  4. 建立价值度量与ROI闭环（Outcome Intelligence）。
+
+  硬约束：
+  - 任何新流水线必须支持 dry-run 和 rollback。
+  - 组织级变更必须包含风险分级与审批证据。
+  - 所有指标必须区分“系统活动量”与“业务价值量”。
+  - 默认 OFF，分域灰度上线。
+
+  ================================
+  P11-A Operations Control Tower
+  ================================
+
+  实现项：
+  1) 控制塔聚合服务
+  - 新建 `quentin/ops/control_tower.py`
+  - 聚合：
+    - health/slo/error-budget
+    - governance approvals
+    - release status
+    - federation state
+    - trust attestation status
+
+  2) 控制塔 API
+  - 在 `meta_agent/api/server.py` 增加：
+    - `GET /ops/control-tower/overview`
+    - `GET /ops/control-tower/incidents`
+    - `GET /ops/control-tower/risks`
+
+  3) 控制塔快照持久化
+  - 新建 `quentin/ops/control_tower_store.py`
+  - 定时写入快照用于趋势分析。
+
+  测试：
+  - `tests/integration/test_control_tower_overview_api.py`
+  - `tests/unit/test_control_tower_aggregation.py`
+
+  ================================
+  P11-B Domain Blueprint Factory
+  ================================
+
+  实现项：
+  1) 域模板规范
+  - 新建 `quentin/blueprint/domain_template_spec.py`
+  - 定义：
+    - required modules
+    - policy defaults
+    - safety profile
+    - rollout profile
+
+  2) 模板生成器
+  - 新建 `quentin/blueprint/domain_factory.py`
+  - 输入 domain 配置，输出可运行模板骨架（config + policy + test scaffolding）。
+
+  3) 验证器
+  - 新建 `quentin/blueprint/domain_validator.py`
+  - 检查模板是否满足最低治理和安全要求。
+
+  测试：
+  - `tests/unit/test_domain_template_spec.py`
+  - `tests/integration/test_domain_factory_generation.py`
+
+  ================================
+  P11-C 组织级变更治理流水线
+  ================================
+
+  实现项：
+  1) 变更请求模型
+  - 新建 `quentin/governance/change_request.py`
+  - 字段：
+    - change_id
+    - scope
+    - risk_level
+    - approvals
+    - rollout_plan
+    - rollback_plan
+
+  2) 变更流水线编排器
+  - 新建 `quentin/governance/change_pipeline.py`
+  - 流程：
+    - request -> impact analysis -> approval chain -> staged rollout -> post-check
+
+  3) 变更追踪 API
+  - 在 `meta_agent/api/server.py` 增加：
+    - `POST /governance/changes`
+    - `GET /governance/changes/{id}`
+    - `POST /governance/changes/{id}/promote`
+
+  测试：
+  - `tests/integration/test_change_pipeline_flow.py`
+  - `tests/unit/test_change_request_schema.py`
+
+  ================================
+  P11-D Outcome Intelligence（价值度量）
+  ================================
+
+  实现项：
+  1) 价值指标模型
+  - 新建 `quentin/analytics/outcome_metrics.py`
+  - 区分：
+    - activity metrics（调用量、任务量）
+    - outcome metrics（成功业务结果、节省时间、风险降低）
+
+  2) ROI 估算器
+  - 新建 `quentin/analytics/roi_estimator.py`
+  - 输出：
+    - per-domain ROI
+    - per-feature ROI
+    - per-quarter trend
+
+  3) 价值报告导出
+  - 新建 `scripts/outcome_export_report.py`
+  - 输出到 `logs/outcome/`.
+
+  测试：
+  - `tests/unit/test_outcome_metrics_model.py`
+  - `tests/integration/test_roi_estimator_pipeline.py`
+
+  ================================
+  P11-E 工业化运维文档
+  ================================
+
+  新增文档：
+  1) `docs/ops/P11_CONTROL_TOWER_RUNBOOK.md`
+  - 控制塔日常巡检、异常处理、升级策略。
+
+  2) `docs/blueprint/P11_DOMAIN_FACTORY_GUIDE.md`
+  - 如何生成新域模板并满足治理要求。
+
+  3) `docs/governance/P11_CHANGE_PIPELINE_RUNBOOK.md`
+  - 组织级变更提交流程与回滚流程。
+
+  4) `docs/analytics/P11_OUTCOME_INTELLIGENCE_GUIDE.md`
+  - 价值指标定义与解释方法。
+
+  5) `docs/improve/P11_ACCEPTANCE_CHECKLIST_2026-02-14.md`
+  - 验收项与证据路径。
+
+  ================================
+  Feature Flags（必须新增）
+  ================================
+
+  更新 `quentin/config/feature_flags.py`：
+  - `ops_control_tower_v1` (default false)
+  - `domain_factory_v1` (default false)
+  - `change_pipeline_v1` (default false)
+  - `outcome_intelligence_v1` (default false)
+
+  更新 `config/openclaw_parity.yaml` 默认 false。
+
+  ================================
+  验收门槛（必须满足）
+  ================================
+
+  1) 控制塔 API 可稳定输出全局态势与风险清单。
+  2) 至少生成 1 个新域模板并通过 validator。
+  3) 至少 1 条组织级变更流水线演示完成（含回滚）。
+  4) 至少 1 份 ROI 报告生成并通过基础一致性校验。
+  5) 关闭 flags 后，不影响 P10 主链路。
+
+  ================================
+  交付格式（严格）
+  ================================
+
+  1) Completed
+  2) Modified Files
+  3) Test Commands + Results
+  4) Control Tower Snapshot Report
+  5) Change Pipeline Execution Report
+  6) Domain Factory Validation Report
+  7) Outcome Intelligence Report
+  8) Remaining Risks
+  9) Rollback Plan
+  10) Evidence Paths
+
+
+
+  进入 P12 阶段。目标是“生态与标准化终局（Ecosystem & Standards Finalization）”：把 Quentin 从组织级产品推进到行业级标准平台。
+
+  阶段目标：
+  1. 建立 Quentin 开放标准（Open Quentin Spec, OQS）。
+  2. 建立跨平台互操作层（Interoperability Bridge）。
+  3. 建立生态认证与兼容测试套件（Ecosystem Certification Kit）。
+  4. 建立长期演进治理委员会机制（Stewardship Council Protocol）。
+
+  硬约束：
+  - 所有开放接口必须先规范后实现（spec-first）。
+  - 互操作层不得降低现有安全策略强度。
+  - 认证结论必须可复验、可追踪、可撤销。
+  - 默认 OFF，独立部署，不影响现网主链路。
+
+  ================================
+  P12-A Open Quentin Spec (OQS)
+  ================================
+
+  实现项：
+  1) OQS 核心规范
+  - 新建 `specs/oqs/v1/`
+  - 至少包含：
+    - `messages.yaml`
+    - `tools.yaml`
+    - `policies.yaml`
+    - `audit.yaml`
+    - `attestation.yaml`
+
+  2) 规范校验器
+  - 新建 `quentin/specs/oqs_validator.py`
+  - 校验 schema 合法性、版本兼容性、必填约束。
+
+  3) 规范导出工具
+  - 新建 `scripts/oqs_export.py`
+  - 从当前实现导出 OQS 文档快照。
+
+  测试：
+  - `tests/unit/test_oqs_validator.py`
+  - `tests/integration/test_oqs_export_roundtrip.py`
+
+  ================================
+  P12-B Interoperability Bridge
+  ================================
+
+  实现项：
+  1) 互操作协议适配层
+  - 新建 `quentin/interoperability/bridge.py`
+  - 适配对象：
+    - external tool protocols
+    - external audit formats
+    - external trust attestations
+
+  2) 语义映射器
+  - 新建 `quentin/interoperability/semantic_mapper.py`
+  - 负责字段映射、枚举对齐、降级策略。
+
+  3) 安全守门
+  - 新建 `quentin/interoperability/safety_gate.py`
+  - 对外部输入统一执行 policy + redaction + signature checks。
+
+  测试：
+  - `tests/integration/test_interop_bridge_safety.py`
+  - `tests/unit/test_semantic_mapper_rules.py`
+
+  ================================
+  P12-C Ecosystem Certification Kit
+  ================================
+
+  实现项：
+  1) 认证套件框架
+  - 新建 `quentin/ecosystem/cert_kit.py`
+  - 维度：
+    - api compatibility
+    - safety conformance
+    - governance traceability
+    - recovery readiness
+
+  2) 认证执行器
+  - 新建 `scripts/ecosystem_run_certification.py`
+  - 输入：目标插件/节点/集成系统
+  - 输出：pass/fail + evidence bundle
+
+  3) 认证结果登记
+  - 新建 `quentin/ecosystem/cert_registry.py`
+  - 记录证书状态、失效时间、撤销原因。
+
+  测试：
+  - `tests/integration/test_ecosystem_certification_flow.py`
+  - `tests/unit/test_cert_registry_lifecycle.py`
+
+  ================================
+  P12-D Stewardship Council Protocol
+  ================================
+
+  实现项：
+  1) 委员会协议模型
+  - 新建 `quentin/governance/stewardship_protocol.py`
+  - 定义：
+    - proposal lifecycle
+    - voting thresholds
+    - emergency override rules
+    - conflict resolution
+
+  2) 协议执行器
+  - 新建 `quentin/governance/stewardship_engine.py`
+  - 可运行治理流程（提案、投票、生效、复审）。
+
+  3) 公开治理日志导出
+  - 新建 `scripts/stewardship_export_log.py`
+  - 输出机器可读治理记录。
+
+  测试：
+  - `tests/unit/test_stewardship_protocol_rules.py`
+  - `tests/integration/test_stewardship_engine_flow.py`
+
+  ================================
+  P12-E 终局文档与标准发布
+  ================================
+
+  新增文档：
+  1) `docs/standards/P12_OQS_SPEC_GUIDE.md`
+  - OQS 结构、版本策略、兼容规则。
+
+  2) `docs/interop/P12_INTEROPERABILITY_GUIDE.md`
+  - 如何对接第三方系统与映射策略。
+
+  3) `docs/ecosystem/P12_CERTIFICATION_KIT_GUIDE.md`
+  - 如何运行认证套件并提交证据。
+
+  4) `docs/governance/P12_STEWARDSHIP_COUNCIL_GUIDE.md`
+  - 委员会协议与治理流程说明。
+
+  5) `docs/improve/P12_ACCEPTANCE_CHECKLIST_2026-02-14.md`
+  - 验收项与证据映射。
+
+  ================================
+  Feature Flags（必须新增）
+  ================================
+
+  更新 `quentin/config/feature_flags.py`：
+  - `oqs_v1` (default false)
+  - `interop_bridge_v1` (default false)
+  - `ecosystem_cert_kit_v1` (default false)
+  - `stewardship_protocol_v1` (default false)
+
+  更新 `config/openclaw_parity.yaml` 默认 false。
+
+  ================================
+  验收门槛（必须满足）
+  ================================
+
+  1) OQS 规范通过校验并能 roundtrip 导出。
+  2) Interop bridge 至少完成 1 个外部系统对接演示（含安全门禁）。
+  3) 认证套件至少完成 1 次完整 pass/fail 评估并产出证据包。
+  4) Stewardship 协议至少完成 1 条提案全流程演示。
+  5) flags 关闭后，不影响 P11 主链路。
+
+  ================================
+  交付格式（严格）
+  ================================
+
+  1) Completed
+  2) Modified Files
+  3) Test Commands + Results
+  4) OQS Conformance Report
+  5) Interoperability Safety Report
+  6) Ecosystem Certification Report
+  7) Stewardship Governance Report
+  8) Remaining Risks
+  9) Rollback Plan
+  10) Evidence Paths

@@ -1,0 +1,14 @@
+{
+  "force_reject_signal_prefixes": [
+    "MISSING_REQUIRED_TESTS",
+    "FAILED_GRADERS",
+    "STRUCTURAL_CODES",
+    "EVIDENCE_MISSING"
+  ],
+  "soft_approve_signal_prefixes": [
+    "FIRST_FAILURE_STAGE",
+    "OWNER_AGENT"
+  ],
+  "soft_approve_max_signal_count": 2,
+  "min_confidence": 0.65
+}

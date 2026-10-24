@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta-Agent Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        .chart-container { border: 1px solid #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Meta-Agent Dashboard</h1>
+    <div class="grid-container">
+        <div class="chart-container">
+            <h2>Domain Performance</h2>
+            <canvas id="domainChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Memory Fabric</h2>
+            <canvas id="memoryChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Self-Programming</h2>
+            <canvas id="selfProgrammingChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Experiments</h2>
+            <canvas id="experimentChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        async function fetchMetrics() {
+            const response = await fetch('/api/metrics');
+            const data = await response.json();
+            return data;
+        }
+
+        async function createCharts() {
+            const metrics = await fetchMetrics();
+
+            // Domain Performance Chart
+            new Chart(document.getElementById('domainChart'), {
+                type: 'bar',
+                data: {
+                    labels: metrics.domain_metrics.map(d => d.domain),
+                    datasets: [{
+                        label: 'Success Rate',
+                        data: metrics.domain_metrics.map(d => d.success_rate),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+
+            // Memory Fabric Chart
+            new Chart(document.getElementById('memoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(metrics.memory_fabric_stats.tier_counts),
+                    datasets: [{
+                        label: 'Memory Tiers',
+                        data: Object.values(metrics.memory_fabric_stats.tier_counts),
+                    }]
+                }
+            });
+
+            // Self-Programming Chart
+            new Chart(document.getElementById('selfProgrammingChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Generated', 'Applied', 'Pass Rate', 'Rollback Rate'],
+                    datasets: [{
+                        label: 'Patch Stats',
+                        data: [
+                            metrics.self_programming_stats.patches_generated,
+                            metrics.self_programming_stats.patches_applied,
+                            metrics.self_programming_stats.pass_rate,
+                            metrics.self_programming_stats.rollback_rate
+                        ],
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+
+            // Experiment Chart
+            new Chart(document.getElementById('experimentChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Total', 'Completed', 'Pass Rate'],
+                    datasets: [{
+                        label: 'Experiment Stats',
+                        data: [
+                            metrics.experiment_stats.total_experiments,
+                            metrics.experiment_stats.completed_experiments,
+                            metrics.experiment_stats.pass_rate
+                        ],
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                }
+            });
+        }
+
+        createCharts();
+    </script>
+</body>
+</html>

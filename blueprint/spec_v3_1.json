@@ -1,0 +1,208 @@
+{
+  "version": "v3.1",
+  "last_updated": "2026-02-11T00:00:00Z",
+  "phases": [
+    "phase0_kernel_trace",
+    "phase1_memory_reflexion",
+    "phase2_eval_experiments",
+    "phase3_skill_evolution",
+    "phase4_self_programming",
+    "phase5_research_meta_optimization"
+  ],
+  "layers": [
+    "L0_infra_kernel",
+    "L1_base_cognitive",
+    "L2_meta",
+    "L3_research_evolution"
+  ],
+  "items": [
+    {
+      "id": "cognitive.perception.context-layer",
+      "name": "Perception & Context Layer (situation + attention)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "cognitive",
+      "description": "Planner 之前做 situation framing + attention gating；将 perception_snapshot 写入 trace。",
+      "required_capabilities": ["situation_classifier", "attention_filter", "trace_plumbing"],
+      "hints": {
+        "modules": [
+          "quentin/cognitive/perception/layer.py",
+          "quentin/cognitive/perception/situation_classifier.py",
+          "quentin/cognitive/perception/attention_filter.py",
+          "quentin/cognitive/loop_impl.py"
+        ],
+        "trace_capability_id": "perception_snapshot",
+        "trace_signals": [
+          {
+            "event_type": "decision",
+            "payload": { "action": "perception_snapshot" }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cognitive.perception.reflex-router",
+      "name": "Situation -> Skill Reflex Router (optional)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "cognitive",
+      "description": "高频情境可命中 procedural skill 反射执行，失败回退 planner。",
+      "required_capabilities": ["situation_skill_router", "fallback_to_planner"],
+      "hints": {
+        "modules": [
+          "quentin/cognitive/perception/situation_skill_router.py",
+          "quentin/cognitive/loop_impl.py"
+        ],
+        "trace_capability_id": "situation_to_skill_hit",
+        "trace_signals": [
+          {
+            "event_type": "decision",
+            "payload": { "action": "situation_to_skill_hit" }
+          }
+        ]
+      }
+    },
+    {
+      "id": "execution.predictive.expected-state",
+      "name": "Predictive Execution (expected_state + prediction_error)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "execution",
+      "description": "执行前构造 expected_state，执行后计算 prediction_error，优先处理误差而非全量上下文。",
+      "required_capabilities": ["expectation_engine", "prediction_error"],
+      "hints": {
+        "modules": [
+          "quentin/cognitive/perception/expectation_engine.py",
+          "quentin/execution/skill_executor.py",
+          "quentin/cognitive/loop_impl.py",
+          "quentin/immune/anomaly.py"
+        ]
+      }
+    },
+    {
+      "id": "memory.gist",
+      "name": "Gist Memory (trace compaction)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "memory",
+      "description": "SleepLoop 将长 trace 压缩为可复用 gist 规则，并在 planner ctx 注入 top-k gist。",
+      "required_capabilities": ["gist_extractor", "planner_injection"],
+      "hints": {
+        "modules": [
+          "quentin/memory/processors/gist_extractor.py",
+          "quentin/sleep/loop_impl.py",
+          "quentin/cognitive/loop_impl.py",
+          "config/cognitive_policies.yaml"
+        ]
+      }
+    },
+    {
+      "id": "memory.situation-profile",
+      "name": "Situation Profile Memory",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "memory",
+      "description": "从执行记录提炼 situation_profile（推荐技能/成功率等），供 reflex router 使用。",
+      "required_capabilities": ["situation_profile_builder"],
+      "hints": {
+        "modules": [
+          "quentin/memory/processors/situation_profile_builder.py",
+          "quentin/sleep/loop_impl.py",
+          "quentin/cognitive/perception/situation_skill_router.py"
+        ]
+      }
+    },
+    {
+      "id": "memory.expected-state-template",
+      "name": "Expected State Template Memory",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "memory",
+      "description": "从成功轨迹中提炼 expected_state_template（v0 保守），供 expectation engine 使用。",
+      "required_capabilities": ["expected_state_template_builder"],
+      "hints": {
+        "modules": [
+          "quentin/memory/processors/expected_state_template_builder.py",
+          "quentin/sleep/loop_impl.py",
+          "quentin/cognitive/perception/expectation_engine.py"
+        ]
+      }
+    },
+    {
+      "id": "tools.mcp.provider",
+      "name": "MCP Tool Provider (Quentin ToolManager integration)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "tools",
+      "description": "将 MCP registry 工具以 ToolProvider 方式注册进 Quentin ToolManager；默认禁用。",
+      "required_capabilities": ["tool_provider", "static_prescreen", "backend_adapter"],
+      "hints": {
+        "modules": [
+          "quentin/tools/providers/mcp.py",
+          "quentin/config/mcp_security.py",
+          "config/mcp_security.yaml",
+          "config/mcp_registry.json"
+        ]
+      }
+    },
+    {
+      "id": "memory.tool-knowledge",
+      "name": "Tool Knowledge Memory (usage writeback)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "tools",
+      "description": "工具调用统计写回 tool_knowledge，支持选择优化/退役/升级。",
+      "required_capabilities": ["tool_usage_sink", "tool_knowledge_schema"],
+      "hints": {
+        "modules": [
+          "quentin/memory/tool_knowledge.py",
+          "quentin/tools/usage/tool_knowledge_sink.py",
+          "quentin/tools/manager.py"
+        ]
+      }
+    },
+    {
+      "id": "governance.tool-governance",
+      "name": "Tool Governance Council (Risk veto)",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "governance",
+      "description": "对工具接入/升级做治理决策，包含 Risk veto；可插拔 gate。",
+      "required_capabilities": ["risk_veto", "governance_gate"],
+      "hints": {
+        "modules": [
+          "quentin/governance/tool_council.py",
+          "config/councils.yaml",
+          "quentin/tools/providers/mcp.py",
+          "config/mcp_security.yaml"
+        ]
+      }
+    },
+    {
+      "id": "dualtrack.capability-gap",
+      "name": "Capability Gap capture + Dual-Track routing",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "dual-track",
+      "description": "识别缺失能力（tool_not_found/tool_blocked），形成 Gap 记录并路由到 MCP 或自编程（仅记录）。",
+      "required_capabilities": ["gap_schema", "dual_track_router"],
+      "hints": {
+        "modules": [
+          "quentin/meta/capability_gap.py",
+          "quentin/meta/dual_track_router.py",
+          "quentin/meta/gap_extractor.py",
+          "quentin/cognitive/loop_impl.py",
+          "quentin/memory/kinds.py"
+        ],
+        "trace_capability_id": "capability_gap_detected",
+        "trace_signals": [
+          {
+            "event_type": "decision",
+            "payload": { "action": "capability_gap_detected" }
+          }
+        ]
+      }
+    }
+  ]
+}
+

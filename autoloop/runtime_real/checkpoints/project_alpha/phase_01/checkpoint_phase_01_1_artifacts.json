@@ -1,0 +1,104 @@
+{
+  "phase_01_energy": {
+    "energy_id": "energy_phase_01_phase_01",
+    "run_id": "project_alpha",
+    "phase_id": "phase_01",
+    "module_id": "phase_01",
+    "schema_valid": true,
+    "build_valid": true,
+    "unit_valid": true,
+    "integration_valid": true,
+    "regression_valid": true,
+    "sor_invariants_valid": true,
+    "ownership_valid": true,
+    "provenance_complete": true,
+    "overlap_risk": "none",
+    "unresolved_failures": 0,
+    "weighted_score": 0.7999999999999999,
+    "hard_fail": false,
+    "failing_invariants": [],
+    "gate_results": [
+      {
+        "gate_name": "dev_execution",
+        "status": "pass",
+        "hard_fail": false,
+        "score": 1.0,
+        "evidence_refs": [],
+        "message": null
+      },
+      {
+        "gate_name": "qa_validation",
+        "status": "pass",
+        "hard_fail": false,
+        "score": 1.0,
+        "evidence_refs": [],
+        "message": null
+      },
+      {
+        "gate_name": "integration_guard",
+        "status": "warn",
+        "hard_fail": false,
+        "score": 0.4,
+        "evidence_refs": [],
+        "message": null
+      }
+    ],
+    "blame_candidates": [],
+    "recommended_action": "retry_module"
+  },
+  "phase_01_decision": {
+    "run_id": "project_alpha",
+    "phase_id": "phase_01",
+    "decision": "retry",
+    "hard_fail": false,
+    "failing_invariants": [],
+    "blame_candidates": [],
+    "energy": {
+      "energy_id": "energy_phase_01_phase_01",
+      "run_id": "project_alpha",
+      "phase_id": "phase_01",
+      "module_id": "phase_01",
+      "schema_valid": true,
+      "build_valid": true,
+      "unit_valid": true,
+      "integration_valid": true,
+      "regression_valid": true,
+      "sor_invariants_valid": true,
+      "ownership_valid": true,
+      "provenance_complete": true,
+      "overlap_risk": "none",
+      "unresolved_failures": 0,
+      "weighted_score": 0.7999999999999999,
+      "hard_fail": false,
+      "failing_invariants": [],
+      "gate_results": [
+        {
+          "gate_name": "dev_execution",
+          "status": "pass",
+          "hard_fail": false,
+          "score": 1.0,
+          "evidence_refs": [],
+          "message": null
+        },
+        {
+          "gate_name": "qa_validation",
+          "status": "pass",
+          "hard_fail": false,
+          "score": 1.0,
+          "evidence_refs": [],
+          "message": null
+        },
+        {
+          "gate_name": "integration_guard",
+          "status": "warn",
+          "hard_fail": false,
+          "score": 0.4,
+          "evidence_refs": [],
+          "message": null
+        }
+      ],
+      "blame_candidates": [],
+      "recommended_action": "retry_module"
+    }
+  }
+}

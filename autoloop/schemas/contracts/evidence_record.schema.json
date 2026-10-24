@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "autoloop/schemas/contracts/evidence_record.schema.json",
+  "title": "EvidenceRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "run_id",
+    "phase_id",
+    "workflow_version",
+    "module_ids",
+    "base_sha",
+    "head_sha",
+    "acceptance_status",
+    "test_status",
+    "missing_required_tests",
+    "grader_results",
+    "changed_files",
+    "first_failure_stage",
+    "failure_type",
+    "primary_failure_type",
+    "secondary_failure_types",
+    "failure_signature",
+    "owner_agent",
+    "missing_artifacts",
+    "first_failure_at",
+    "first_failure_event_id",
+    "final_status_label",
+    "terminal_state",
+    "failure_events",
+    "event_log_file",
+    "created_at"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workflow_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "module_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "base_sha": {
+      "type": "string"
+    },
+    "head_sha": {
+      "type": "string"
+    },
+    "acceptance_status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "test_status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "missing_required_tests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "grader_results": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "first_failure_stage": {
+      "type": "string"
+    },
+    "failure_type": {
+      "type": "string"
+    },
+    "primary_failure_type": {
+      "type": "string"
+    },
+    "secondary_failure_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_signature": {
+      "type": "string"
+    },
+    "owner_agent": {
+      "type": "string"
+    },
+    "missing_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "first_failure_at": {
+      "type": "string"
+    },
+    "first_failure_event_id": {
+      "type": "string"
+    },
+    "final_status_label": {
+      "type": "string"
+    },
+    "terminal_state": {
+      "type": "string"
+    },
+    "failure_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "event_log_file": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

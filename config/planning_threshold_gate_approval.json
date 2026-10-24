@@ -1,0 +1,7 @@
+{
+  "approved": false,
+  "expires_at": "",
+  "ticket": "",
+  "owner": "",
+  "reason": "Set approved=true with ticket/owner/expires_at only for temporary CI override."
+}

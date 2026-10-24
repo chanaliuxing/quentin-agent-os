@@ -1,0 +1,11 @@
+{
+  "mean_score_error": -0.3588706518326668,
+  "overlap_penalties": {
+    "none": 0.0,
+    "low": 0.290818365295196,
+    "medium": 0.3,
+    "high": 0.3
+  },
+  "invariant_penalty": 0.2,
+  "unresolved_failure_penalty": 0.18040918264759806
+}

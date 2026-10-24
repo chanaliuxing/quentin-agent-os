@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "autoloop/schemas/sor/project_spec.schema.json",
+  "title": "ProjectSpec",
+  "type": "object",
+  "required": [
+    "project_id",
+    "contract_version",
+    "modules",
+    "interfaces",
+    "ownership",
+    "gate_policy",
+    "workflow_topology"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ModuleSpec"
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/InterfaceSpec"
+      }
+    },
+    "ownership": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FileOwnershipRule"
+      }
+    },
+    "gate_policy": {
+      "$ref": "#/$defs/GatePolicy"
+    },
+    "workflow_topology": {
+      "$ref": "#/$defs/WorkflowTopology"
+    }
+  },
+  "$defs": {
+    "IoRef": {
+      "type": "object",
+      "required": [
+        "name",
+        "schema_ref"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ModuleSpec": {
+      "type": "object",
+      "required": [
+        "module_id",
+        "summary",
+        "depends_on",
+        "inputs",
+        "outputs",
+        "acceptance_criteria"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "module_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IoRef"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IoRef"
+          }
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "InterfaceSpec": {
+      "type": "object",
+      "required": [
+        "interface_id",
+        "producer_module",
+        "consumer_modules",
+        "schema_ref"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "interface_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "producer_module": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consumer_modules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "schema_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "FileOwnershipRule": {
+      "type": "object",
+      "required": [
+        "path_glob",
+        "owner_role",
+        "module_id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path_glob": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "module_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "GatePolicy": {
+      "type": "object",
+      "required": [
+        "phase_gates",
+        "module_gates",
+        "score_threshold"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "phase_gates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "module_gates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "score_threshold": {
+          "type": "number"
+        }
+      }
+    },
+    "WorkflowTopology": {
+      "type": "object",
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "src",
+              "dst"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "src": {
+                "type": "string"
+              },
+              "dst": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

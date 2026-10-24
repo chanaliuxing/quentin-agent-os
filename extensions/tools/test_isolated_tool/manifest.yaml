@@ -1,0 +1,8 @@
+id: test_isolated_tool
+name: test_isolated_tool
+description: A tool to test runtime isolation.
+entrypoint: "logic:run"
+requires_env:
+  - SECRET_KEY_REQUIRED
+permissions:
+  - fs_read

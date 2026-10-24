@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "autoloop/schemas/contracts/result_packet.schema.json",
+  "title": "ResultPacket",
+  "type": "object",
+  "required": [
+    "result_id",
+    "task_id",
+    "run_id",
+    "phase_id",
+    "module_id",
+    "agent",
+    "produced_artifact_ids",
+    "contract_payload",
+    "claimed_file_changes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "module_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "produced_artifact_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contract_payload": {
+      "type": "object"
+    },
+    "claimed_file_changes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

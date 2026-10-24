@@ -1,0 +1,37 @@
+id: bench_screwdriver
+name: bench.screwdriver
+description: >
+  Benchmark tool: a multipurpose "screwdriver" with two affordances.
+  It can tighten/loosen screws and also "cut/open" box tape.
+  Designed for tool-adaptation benchmarks: deterministic output + cacheable.
+entrypoint: "logic:run"
+kind: external
+domain: bench
+risk_level: low
+output_trust: trusted
+permissions: []
+input_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    task:
+      type: string
+      description: Natural language task (e.g. "tighten screw", "open package tape").
+    target:
+      type: string
+      description: Optional target identifier (e.g. "M3 screw", "box #12").
+    mode:
+      type: string
+      enum: ["auto", "screw", "cut"]
+      default: "auto"
+      description: Explicit affordance selection; "auto" infers from task.
+  required: ["task"]
+output_schema:
+  type: object
+  additionalProperties: true
+cache:
+  enabled: true
+  ttl_sec: 3600
+  key_fields: ["task", "target", "mode"]
+meta:
+  affordances: ["screw", "cut"]

@@ -1,0 +1,10 @@
+{
+  "project_id": "autoloop-project",
+  "phase_id": "phase_01",
+  "prd_path": "./blueprint.md",
+  "decision": "rejected",
+  "reviewer": "auto_review_agent",
+  "notes": "Auto-rejected due to risk signals: MISSING_REQUIRED_TESTS:integration,unit, FAILED_GRADERS:contract_validator, FIRST_FAILURE_STAGE:reviewer_output_missing, OWNER_AGENT:reviewer",
+  "required_hook": "./autoloop/runtime_real7/hooks/phase_01_human_review_required.json",
+  "timestamp": "2026-03-07T11:42:11.019449"
+}

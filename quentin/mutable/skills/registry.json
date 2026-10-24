@@ -1,0 +1,26 @@
+{
+  "hello_world_skill": {
+    "module": "quentin.mutable.skills.hello_world_skill",
+    "callable": "hello_world_skill",
+    "created_at": "2025-12-12T22:30:49.180968",
+    "source_candidate": "test_001",
+    "tags": [],
+    "version": "1.0.0"
+  },
+  "calc_fibonacci": {
+    "module": "quentin.mutable.skills.calc_fibonacci",
+    "callable": "calc_fibonacci",
+    "created_at": "2025-12-13T01:25:58.326992",
+    "source_candidate": "test_skill_001",
+    "tags": [],
+    "version": "1.0.0"
+  },
+  "skill_cand_123": {
+    "module": "quentin.mutable.skills.skill_cand_123",
+    "callable": "skill_cand_123",
+    "created_at": "2026-02-08T19:06:38.495845",
+    "source_candidate": "cand_123",
+    "tags": [],
+    "version": "1.0.0"
+  }
+}

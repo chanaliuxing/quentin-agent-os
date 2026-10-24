@@ -1,0 +1,18 @@
+{
+  "contract_version": "1.0",
+  "change_id": "change_phase_01_module_main",
+  "task_id": "task_phase_01_module_main",
+  "allowed_paths": [
+    "app/module_main/**",
+    "app/**/*.py"
+  ],
+  "forbidden_paths": [
+    "runtime/**",
+    "phases/**"
+  ],
+  "required_files": [],
+  "required_symbols": [],
+  "forbidden_symbols": [],
+  "min_effective_diff_lines": 1,
+  "must_update_tests": true
+}

@@ -1,0 +1,21 @@
+[
+  {
+    "server_id": "fs-server",
+    "transport": "stdio",
+    "uri": "./bin/fs-mcp-server",
+    "tools": [
+      {
+        "name": "read_file",
+        "description": "Read a file from the local filesystem",
+        "signature": "read_file(path: string)",
+        "risk_level": "medium"
+      },
+      {
+        "name": "write_file",
+        "description": "Write a file to the local filesystem",
+        "signature": "write_file(path: string, content: string)",
+        "risk_level": "high"
+      }
+    ]
+  }
+]

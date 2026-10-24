@@ -1,0 +1,20 @@
+dual_track:
+  # Master switch for creating governed acquisition requests from capability gaps.
+  enabled: false
+
+  # Only create requests in sandbox by default.
+  allow_in_staging: false
+  allow_in_prod: false
+
+  # Safety: never auto-acquire in high-risk domains.
+  blocked_domains:
+    - legal
+    - trading
+
+  # Governance knobs.
+  require_tool_governance: true
+  require_patch_governance: true
+
+  # Rate limiting per attempt.
+  max_requests_per_attempt: 2
+

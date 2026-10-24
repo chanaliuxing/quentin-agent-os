@@ -1,0 +1,74 @@
+# config/councils.yaml
+
+councils:
+  planner:
+    description: "Multi-model planning council"
+    decision_mode: arbiter_llm
+    arbiter:
+      router_mode: planner_arbiter
+      router_task_type: core
+    members:
+      - member_id: deepseek_r1_planner
+        router_mode: planner_deepseek_r1
+        router_task_type: core
+        role: speed
+        weight: 1.0
+      - member_id: qwen_7b_planner
+        router_mode: planner_qwen_7b
+        router_task_type: core
+        role: safety
+        weight: 1.0
+
+  reflection:
+    description: "Reflection council for complex errors"
+    decision_mode: arbiter_llm
+    arbiter:
+      router_mode: reflection_arbiter
+      router_task_type: core
+    members:
+      - member_id: deepseek_r1_reflection
+        router_mode: reflection_deepseek_r1
+        router_task_type: core
+        role: critic
+        weight: 1.0
+      - member_id: qwen_7b_reflection
+        router_mode: reflection_qwen_7b
+        router_task_type: core
+        role: analyst
+        weight: 1.0
+
+  done:
+    description: "Definition-of-Done council"
+    decision_mode: arbiter_llm
+    arbiter:
+      router_mode: done_arbiter
+      router_task_type: core
+    members:
+      - member_id: deepseek_r1_done
+        router_mode: done_deepseek_r1
+        router_task_type: core
+        role: safety
+        weight: 1.0
+      - member_id: qwen_7b_done
+        router_mode: done_qwen_7b
+        router_task_type: core
+        role: domain_expert
+        weight: 1.0
+
+  patch:
+    description: "Patch review council"
+    decision_mode: arbiter_llm
+    arbiter:
+      router_mode: patch_arbiter
+      router_task_type: core
+    members:
+      - member_id: deepseek_r1_patch
+        router_mode: patch_deepseek_r1
+        router_task_type: core
+        role: reviewer
+        weight: 1.0
+      - member_id: qwen_7b_patch
+        router_mode: patch_qwen_7b
+        router_task_type: core
+        role: reviewer
+        weight: 1.0

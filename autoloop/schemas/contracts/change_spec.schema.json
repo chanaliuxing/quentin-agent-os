@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "autoloop/schemas/contracts/change_spec.schema.json",
+  "title": "ChangeSpec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "change_id",
+    "task_id",
+    "allowed_paths",
+    "forbidden_paths",
+    "required_files",
+    "required_symbols",
+    "forbidden_symbols",
+    "min_effective_diff_lines",
+    "must_update_tests"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "change_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "allowed_paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_symbols": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_symbols": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "min_effective_diff_lines": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "must_update_tests": {
+      "type": "boolean"
+    }
+  }
+}

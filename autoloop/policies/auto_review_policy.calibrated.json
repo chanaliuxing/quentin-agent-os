@@ -1,0 +1,55 @@
+{
+  "profiles": {
+    "normal": {
+      "auto_approve_conditions": {
+        "hook_acceptance_status": "passed",
+        "evidence_acceptance_status": "passed",
+        "test_status": "success",
+        "require_no_missing_tests": true,
+        "require_all_graders_pass": true
+      },
+      "confidence": {
+        "approve": 0.9,
+        "reject": 0.8
+      }
+    },
+    "strict": {
+      "auto_approve_conditions": {
+        "hook_acceptance_status": "passed",
+        "evidence_acceptance_status": "passed",
+        "test_status": "success",
+        "require_no_missing_tests": true,
+        "require_all_graders_pass": true
+      },
+      "confidence": {
+        "approve": 0.95,
+        "reject": 0.85
+      }
+    }
+  },
+  "structural_finding_codes": [
+    "PATH_CONFLICT",
+    "MISSING_TEST_BINDING",
+    "CONTRACT_MISMATCH"
+  ],
+  "hard_reject_signal_prefixes": [
+    "MISSING_REQUIRED_TESTS",
+    "FAILED_GRADERS",
+    "STRUCTURAL_CODES",
+    "EVIDENCE_MISSING"
+  ],
+  "repair_templates": {
+    "dev_output_missing": "Dev agent must produce valid JSON contract result file; verify write path and contract serialization before exit.",
+    "reviewer_output_missing": "Reviewer agent must emit strict JSON with verdict/findings/finding_codes; if needs_revision, include at least one finding code.",
+    "required_test_missing": "Bind AcceptanceSpec.required_tests to concrete executed gates and ensure required suites run with pass status.",
+    "review_gate_rejected:PATH_CONFLICT": "Resolve path policy mismatch: map artifacts into allowed_paths and avoid forbidden_paths writes.",
+    "review_gate_rejected:MISSING_TEST_BINDING": "Add explicit required_tests-to-gate mapping in plan and QA strategy.",
+    "grader_failed:contract_validator": "Repair contract outputs for all roles to satisfy schema and required fields."
+  },
+  "active_profile": "normal",
+  "calibration": {
+    "sample_size": 4,
+    "passed_ratio": 0.25,
+    "target_profile": "normal"
+  }
+}

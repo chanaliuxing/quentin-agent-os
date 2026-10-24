@@ -1,0 +1,32 @@
+    async def _execute_tool_call(self, *, tool_call: Dict[str, Any], context: Dict[str, Any]) -> ToolCallResult:
+        """
+        Executes a tool call using the tool manager and handles security gating.
+        P5: Unified Return Contract - always returns ToolCallResult.
+        """
+        from quentin.tools.schemas import ToolCallResult, ToolCallRequest
+        from quentin.tools.manager import ToolCallContext
+
+        if self.tool_manager is None:
+            return ToolCallResult(tool_name="unknown", success=False, error="tool_manager_unavailable")
+
+        # Extract names
+        tool_name = tool_call.get("tool_name", tool_call.get("name", "unknown"))
+        payload = tool_call.get("args", tool_call.get("arguments", {}))
+
+        req = ToolCallRequest(tool_name=tool_name, payload=payload)
+        ctx = ToolCallContext(metadata=context)
+
+        try:
+            res = await self.tool_manager.call_tool(req, ctx)
+            
+            # P5: Proactive Guidance for tool-not-found
+            if not res.success and "not found" in str(res.error or "").lower():
+                available = sorted(list(getattr(self.tool_manager, "_handlers", {}).keys()))[:15]
+                res.error = f"{res.error}. HINT: Use one of: {available}."
+            
+            return res
+
+        except PermissionError as e:
+            return ToolCallResult(tool_name=tool_name, success=False, error=f"security_violation: {e}")
+        except Exception as e:
+            return ToolCallResult(tool_name=tool_name, success=False, error=str(e))

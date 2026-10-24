@@ -1,0 +1,46 @@
+{
+  "max_iterations": 20,
+  "sleep_seconds": 2.0,
+  "verify_command": "python3 verify_system.py",
+  "test_command": "pytest -q tests/unit/test_verify_system_env_contract.py",
+  "analyzer_command": "gemini -p {prompt}",
+  "fixer_command": "gemini -p {prompt}",
+  "analyzer_timeout_s": 420,
+  "fixer_timeout_s": 900,
+  "verify_timeout_s": 1800,
+  "test_timeout_s": 1200,
+  "stop_on_token_exhausted": true,
+  "max_log_lines_per_file": 400,
+  "log_files": [
+    "data/traces/events.jsonl",
+    "data/audit_events.jsonl",
+    "data/llm_raw_history.jsonl"
+  ],
+  "run_root": "generated/brain_autoloop",
+  "analyzer_prompt_template": "prompts/autoloop/analyzer.md",
+  "fixer_prompt_template": "prompts/autoloop/fixer.md",
+  "fixer_expect_json": true,
+  "require_file_changes": true,
+  "stop_on_no_file_change": true,
+  "allowed_write_roots": [
+    "extensions/tools",
+    "mutable",
+    "generated",
+    "tests",
+    "scripts",
+    "meta_agent",
+    "quentin",
+    "docs",
+    "config",
+    "verify_system.py"
+  ],
+  "max_changes_per_iteration": 20,
+  "benchmark_command": "python3 scripts/benchmark_websearch_tool.py --tool-dir extensions/tools/web_search --previous-report generated/benchmarks/web_search_benchmark_prev.json --output generated/benchmarks/web_search_benchmark_report.json --pass-score 75",
+  "benchmark_timeout_s": 600,
+  "benchmark_report_path": "generated/benchmarks/web_search_benchmark_report.json",
+  "benchmark_previous_report_path": "generated/benchmarks/web_search_benchmark_prev.json",
+  "require_benchmark_improve": false,
+  "env_overrides": {
+    "CODER_BACKEND": "auto_cli"
+  }
+}

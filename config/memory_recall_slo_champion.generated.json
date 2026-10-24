@@ -1,0 +1,23 @@
+{
+  "tiers": {
+    "300": {
+      "modes": {
+        "text_only": {
+          "p95_ms_max": 213.202,
+          "avg_ms_max": 58.991,
+          "hit_rate_at_k_min": 0.97
+        },
+        "vector_only": {
+          "p95_ms_max": 23.185,
+          "avg_ms_max": 15.635,
+          "hit_rate_at_k_min": 0.97
+        },
+        "hybrid": {
+          "p95_ms_max": 72.41,
+          "avg_ms_max": 64.088,
+          "hit_rate_at_k_min": 0.37
+        }
+      }
+    }
+  }
+}

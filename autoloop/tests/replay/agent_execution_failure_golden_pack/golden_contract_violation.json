@@ -1,0 +1,11 @@
+{
+  "primary_failure_type": "AGENT_CONTRACT_VIOLATION",
+  "first_failure_stage": "dev_contract_failed",
+  "missing_artifacts": [],
+  "grader_results": {"contract_validator": "fail"},
+  "failure_events": [
+    {"cause_type": "AGENT_CONTRACT_VIOLATION"}
+  ],
+  "expected_signature": "agent_contract_violation:dev_contract_failed:grader:contract_validator:fail:events:agent_contract_violation",
+  "expected_candidate_enum": "AGENT_CONTRACT_VIOLATION_DEV_CONTRACT_FAILED_GRADER_CONTRACT_VALIDATOR_FAIL_EVENTS_AGENT_CONTRACT_VIOLATION"
+}

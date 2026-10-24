@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Quentin Knowledge Graph Viewer</title>
+    <style>
+      body { font-family: ui-sans-serif, system-ui, -apple-system; margin: 24px; }
+      h1 { margin: 0 0 12px 0; font-size: 18px; }
+      .hint { color: #444; margin: 8px 0 16px 0; }
+      pre { background: #f6f6f6; padding: 12px; border-radius: 8px; overflow: auto; }
+      table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background: #f2f2f2; }
+      code { background: #f2f2f2; padding: 1px 4px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>Quentin Knowledge Graph Viewer</h1>
+    <div class="hint">
+      Select a JSON export file produced by <code>python scripts/export_kg_subgraph.py --memory-id ...</code>.
+    </div>
+    <input id="file" type="file" accept="application/json" />
+    <div id="meta" class="hint"></div>
+
+    <h2>Nodes</h2>
+    <table id="nodes">
+      <thead><tr><th>node_id</th><th>type</th><th>ref_id</th><th>title</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Edges</h2>
+    <table id="edges">
+      <thead><tr><th>edge_id</th><th>src</th><th>dst</th><th>type</th><th>weight</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Raw</h2>
+    <pre id="raw"></pre>
+
+    <script>
+      function render(subgraph) {
+        document.getElementById("raw").textContent = JSON.stringify(subgraph, null, 2);
+        const meta = (subgraph.meta && subgraph.meta.root_ref) ? subgraph.meta.root_ref.join(":") : "unknown";
+        document.getElementById("meta").textContent = `root=${meta} depth=${(subgraph.meta && subgraph.meta.depth) || ""}`;
+
+        const nodesBody = document.querySelector("#nodes tbody");
+        nodesBody.innerHTML = "";
+        for (const n of (subgraph.nodes || [])) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td><code>${n.node_id}</code></td><td>${n.node_type}</td><td>${n.ref_id}</td><td>${(n.title || "").slice(0, 200)}</td>`;
+          nodesBody.appendChild(tr);
+        }
+
+        const edgesBody = document.querySelector("#edges tbody");
+        edgesBody.innerHTML = "";
+        for (const e of (subgraph.edges || [])) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td><code>${e.edge_id}</code></td><td><code>${e.src_node_id}</code></td><td><code>${e.dst_node_id}</code></td><td>${e.edge_type}</td><td>${e.weight}</td>`;
+          edgesBody.appendChild(tr);
+        }
+      }
+
+      document.getElementById("file").addEventListener("change", async (ev) => {
+        const file = ev.target.files && ev.target.files[0];
+        if (!file) return;
+        const text = await file.text();
+        render(JSON.parse(text));
+      });
+    </script>
+  </body>
+</html>
+

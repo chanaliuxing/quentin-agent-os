@@ -1,0 +1,731 @@
+{
+  "version": "v3",
+  "codename": "Project Quentin / Blueprint Sections Coverage",
+  "items": [
+    {
+      "id": "arch.layers",
+      "name": "Four Logic Layers (L0-L3)",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "architecture",
+      "description": "Distinct module boundaries for L0 infra/kernel, L1 base, L2 meta, L3 research/evolution.",
+      "required_capabilities": ["layer_boundaries", "module_separation"],
+      "hints": {
+        "modules": ["blueprint.md", "docs/TODO_BLUEPRINT_V3_CHECKLIST.md"],
+        "trace_capability_id": "arch.layers",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "arch.layers", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "research_manager"
+      }
+    },
+    {
+      "id": "arch.envs",
+      "name": "Three Environments (sandbox/staging/prod)",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "architecture",
+      "description": "Environment gates for evolution/promotion; prod is conservative by default.",
+      "required_capabilities": ["environment_gates"],
+      "hints": {
+        "modules": ["quentin/domain/policies.py", "quentin/kernel/policy.py"],
+        "trace_capability_id": "arch.envs",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "arch.envs", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "research_manager"
+      }
+    },
+    {
+      "id": "kernel.safety",
+      "name": "SafetyKernel Guard & Audit",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "High-impact actions are gated and audited; defaults are conservative.",
+      "required_capabilities": ["guard_action", "audit_log"],
+      "hints": {
+        "modules": ["quentin/kernel/safety.py", "quentin/kernel/audit.py"],
+        "trace_capability_id": "kernel.safety",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "kernel.safety", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "kernel_safety"
+      }
+    },
+    {
+      "id": "kernel.lanes",
+      "name": "Concurrency Lanes",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "Session-level serialization + global concurrency control.",
+      "required_capabilities": ["resolve_session_lane", "resolve_global_lane"],
+      "hints": {
+        "modules": ["quentin/infra/concurrency/lanes.py"],
+        "trace_capability_id": "kernel.lanes",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "kernel.lanes", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "lanes"
+      }
+    },
+    {
+      "id": "kernel.abort",
+      "name": "Abort / Cancellation Semantics",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "Cancellation token propagation and safe subprocess cancellation.",
+      "required_capabilities": ["CancellationToken", "raise_if_cancelled"],
+      "hints": {
+        "modules": ["quentin/infra/concurrency/cancellation.py", "quentin/infra/subprocess_utils.py"],
+        "trace_capability_id": "kernel.abort",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "kernel.abort", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "abort"
+      }
+    },
+    {
+      "id": "kernel.session_write_lock",
+      "name": "Session Write Lock",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "JSONL persistence uses a write lock to avoid corruption.",
+      "required_capabilities": ["acquire_session_write_lock"],
+      "hints": {
+        "modules": ["quentin/runtime/session_write_lock.py"],
+        "trace_capability_id": "kernel.session_write_lock",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "kernel.session_write_lock", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "session_write_lock"
+      }
+    },
+    {
+      "id": "kernel.context_budget",
+      "name": "Context Budget & Compaction",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "Token estimation, guard, pruning, compaction are available for long contexts.",
+      "required_capabilities": ["estimate_tokens", "apply_context_budget", "compact_messages"],
+      "hints": {
+        "modules": ["quentin/llm/context_budget.py", "quentin/llm/compaction.py"],
+        "trace_capability_id": "kernel.context_budget",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "kernel.context_budget", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "context_budget_compaction"
+      }
+    },
+    {
+      "id": "kernel.auth_profiles",
+      "name": "Auth Profiles & Failover",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "runtime",
+      "description": "Provider auth profile governance and failover classification.",
+      "required_capabilities": ["AuthProfileStore", "classify_failover_reason"],
+      "hints": {
+        "modules": ["quentin/llm/auth_profiles.py", "quentin/llm/provider_failover.py", "quentin/llm/failover.py"],
+        "trace_capability_id": "kernel.auth_profiles",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "kernel.auth_profiles", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "auth_profiles_failover"
+      }
+    },
+
+    {
+      "id": "l1.cognitive_loop",
+      "name": "Cognitive Loop (Trace-Required)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "loop",
+      "description": "Primary execution path produces structured traces and summaries.",
+      "required_capabilities": ["trace_required", "planner", "executor"],
+      "hints": {
+        "modules": ["quentin/runtime/cognitive_loop.py", "quentin/cognitive/loop_impl.py"],
+        "trace_capability_id": "l1.cognitive_loop",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l1.cognitive_loop", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "cognitive_loop"
+      }
+    },
+    {
+      "id": "l1.planner",
+      "name": "Planner (Hierarchical v1)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "planning",
+      "description": "Planner output is structured and traceable; supports A/B evaluation.",
+      "required_capabilities": ["plan_schema", "planning_trace"],
+      "hints": {
+        "modules": ["quentin/planning/planner.py", "quentin/planning/hierarchical_planner.py"],
+        "trace_capability_id": "l1.planner",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l1.planner", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "planner"
+      }
+    },
+    {
+      "id": "l1.executor",
+      "name": "Executor (Tool/Skill Execution)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "execution",
+      "description": "Executor runs tool/skills with trace and governance.",
+      "required_capabilities": ["execute_steps", "tool_invoke"],
+      "hints": {
+        "modules": ["quentin/execution/skill_executor.py", "quentin/execution/skill_executor_impl.py"],
+        "trace_capability_id": "l1.executor",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l1.executor", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "executor"
+      }
+    },
+    {
+      "id": "l1.tool_governance",
+      "name": "Tool Governance (Policy + Hooks)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "tools",
+      "description": "Tool invocation is gated; schemas may be transformed per-provider.",
+      "required_capabilities": ["tool_policy", "before_tool_call_hook"],
+      "hints": {
+        "modules": ["quentin/tools/manager.py", "quentin/tools/schema_transformer.py"],
+        "trace_capability_id": "l1.tool_governance",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l1.tool_governance", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "tool_governance"
+      }
+    },
+
+    {
+      "id": "tools.schema_transformer",
+      "name": "Tool Schema Transformer (Provider Quirks)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "tools",
+      "description": "Normalizes tool JSON schema for provider compatibility (e.g. Gemini/Claude quirks).",
+      "required_capabilities": ["normalize_tool_schema", "clean_schema_for_gemini"],
+      "hints": {
+        "modules": ["quentin/tools/schema_transformer.py"],
+        "trace_capability_id": "tools.schema_transformer",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "tools.schema_transformer", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "tool_schema_transformer"
+      }
+    },
+    {
+      "id": "tools.audit_events",
+      "name": "Tool Audit Events",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "tools",
+      "description": "ToolManager produces auditable events for success/denied/error/aborted phases.",
+      "required_capabilities": ["audit_tool_event", "tool_event_phases"],
+      "hints": {
+        "modules": ["quentin/tools/manager.py", "quentin/kernel/audit.py"],
+        "trace_capability_id": "tools.audit_events",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "tools.audit_events", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "tool_audit"
+      }
+    },
+    {
+      "id": "traces.execution_trace",
+      "name": "Execution Trace Core (Recorder + Schemas)",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "traces",
+      "description": "Trace schema + JSONL recorder support the 'no trace, no run' principle.",
+      "required_capabilities": ["TraceEventType", "JsonlTraceRecorder", "new_trace_event"],
+      "hints": {
+        "modules": ["quentin/traces/core.py", "quentin/traces/execution_trace.py"],
+        "trace_capability_id": "traces.execution_trace",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "traces.execution_trace", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "execution_trace"
+      }
+    },
+    {
+      "id": "infra.kv_store",
+      "name": "KVStore (Experiment/State Persistence)",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "infra",
+      "description": "SQLite-backed KVStore used for experiments and durable state.",
+      "required_capabilities": ["KVStore", "save", "get"],
+      "hints": {
+        "modules": ["quentin/infra/storage/kv_store.py"],
+        "trace_capability_id": "infra.kv_store",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "infra.kv_store", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "kv_store"
+      }
+    },
+    {
+      "id": "governance.constitution",
+      "name": "Governance Constitution (YAML-backed Rules)",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "governance",
+      "description": "Human-authored governance rules loaded from governance.yaml.",
+      "required_capabilities": ["Constitution", "load"],
+      "hints": {
+        "modules": ["quentin/governance/constitution.py", "governance.yaml"],
+        "trace_capability_id": "governance.constitution",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "governance.constitution", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "governance_constitution"
+      }
+    },
+    {
+      "id": "governance.patch_council",
+      "name": "Patch Governance Council",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "governance",
+      "description": "Patch governance flow enforces allow/deny decisions via council review.",
+      "required_capabilities": ["PatchGovernanceCouncil", "decide"],
+      "hints": {
+        "modules": ["quentin/governance/patch_council.py", "scripts/govern_patch.py"],
+        "trace_capability_id": "governance.patch_council",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "governance.patch_council", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "patch_governance"
+      }
+    },
+
+    {
+      "id": "memory.fabric",
+      "name": "MemoryFabric (STS/MTS/LTS)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase1_memory_reflexion",
+      "category": "memory",
+      "description": "Tiered memory schema + remember/recall APIs.",
+      "required_capabilities": ["remember_atomic", "recall"],
+      "hints": {
+        "modules": ["quentin/memory/fabric.py", "quentin/memory/models.py"],
+        "trace_capability_id": "memory.fabric",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "memory.fabric", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "memory_fabric"
+      }
+    },
+    {
+      "id": "memory.hybrid_recall",
+      "name": "Hybrid Recall (Text + Vector)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "memory",
+      "description": "Hybrid recall mode with scoring and debug traces.",
+      "required_capabilities": ["hybrid", "alpha", "k_text", "k_vec"],
+      "hints": {
+        "modules": ["quentin/memory/fabric.py", "quentin/memory/store_sqlite.py"],
+        "trace_capability_id": "memory.hybrid_recall",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "memory.hybrid_recall", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "memory_fabric"
+      }
+    },
+    {
+      "id": "memory.sqlite_vec",
+      "name": "SQLite Vec Backend (Optional)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "memory",
+      "description": "Optional sqlite-vec store for faster vector search.",
+      "required_capabilities": ["sqlite_vec_store"],
+      "hints": {
+        "modules": ["quentin/memory/store_sqlite_vec.py"],
+        "trace_capability_id": "memory.sqlite_vec",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "memory.sqlite_vec", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "memory_fabric"
+      }
+    },
+    {
+      "id": "memory.embedding_fallback",
+      "name": "Embedding Fallback + Health Snapshot",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "memory",
+      "description": "Configurable embedding provider fallback and health stats.",
+      "required_capabilities": ["FallbackEmbeddingClient", "health_snapshot"],
+      "hints": {
+        "modules": ["quentin/infra/llm/embeddings.py"],
+        "trace_capability_id": "memory.embedding_fallback",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "memory.embedding_fallback", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "memory_fabric"
+      }
+    },
+    {
+      "id": "memory.session_deltas",
+      "name": "Session Deltas (Incremental STS Writes)",
+      "layer": "L1_base_cognitive",
+      "phase": "phase2_eval_experiments",
+      "category": "memory",
+      "description": "Incremental write of key deltas during long runs (budgeted + guarded).",
+      "required_capabilities": ["SessionDeltaWriter"],
+      "hints": {
+        "modules": ["quentin/memory/session_deltas.py", "quentin/cognitive/loop_impl.py"],
+        "trace_capability_id": "memory.session_deltas",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "memory.session_deltas", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "memory_fabric"
+      }
+    },
+    {
+      "id": "memory.consolidation_batch",
+      "name": "Memory Consolidation Batch Runner",
+      "layer": "L2_meta",
+      "phase": "phase3_skill_evolution",
+      "category": "memory",
+      "description": "Promotion/decay/consolidation runs are scheduled and audited.",
+      "required_capabilities": ["MemoryConsolidationBatchRunner"],
+      "hints": {
+        "modules": ["quentin/memory/batch_runner.py", "quentin/sleep/loop_impl.py"],
+        "trace_capability_id": "memory.consolidation_batch",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "memory.consolidation_batch", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "sleep_loop"
+      }
+    },
+    {
+      "id": "memory.safe_forgetting",
+      "name": "Safe Forgetting",
+      "layer": "L2_meta",
+      "phase": "phase3_skill_evolution",
+      "category": "memory",
+      "description": "Forgetting is safe by design; LTS uses replacement semantics via supersedes fields.",
+      "required_capabilities": ["run_safe_forgetting"],
+      "hints": {
+        "modules": ["quentin/memory/forgetting.py"],
+        "trace_capability_id": "memory.safe_forgetting",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "memory.safe_forgetting", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "sleep_loop"
+      }
+    },
+
+    {
+      "id": "l2.immune_loop",
+      "name": "ImmuneLoop (Anomaly Detection + Case Recording)",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "loop",
+      "description": "Detect anomalies from traces, record immune cases, optionally trigger self-fix.",
+      "required_capabilities": ["run_once", "save_immune_case"],
+      "hints": {
+        "modules": ["quentin/loops/immune_loop.py", "quentin/immune/store.py"],
+        "trace_capability_id": "l2.immune_loop",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l2.immune_loop", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "immune_loop"
+      }
+    },
+    {
+      "id": "l2.immune_promotion",
+      "name": "ImmuneLoop Threshold Promotion",
+      "layer": "L3_research_evolution",
+      "phase": "phase5_research_meta_optimization",
+      "category": "research",
+      "description": "Offline A/B thresholds -> promote -> runtime defaults (feature-flagged).",
+      "required_capabilities": ["immune_loop_defaults", "promotion_apply"],
+      "hints": {
+        "modules": ["quentin/loops/immune_defaults.py", "scripts/run_immune_loop_feedback_loop.py"],
+        "trace_capability_id": "l2.immune_promotion",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l2.immune_promotion", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "immune_loop"
+      }
+    },
+    {
+      "id": "l2.sleep_loop",
+      "name": "SleepLoop (Consolidation + Training Pairs)",
+      "layer": "L2_meta",
+      "phase": "phase3_skill_evolution",
+      "category": "loop",
+      "description": "Periodic consolidation from traces into memory and training pairs.",
+      "required_capabilities": ["sleep_report", "training_pairs"],
+      "hints": {
+        "modules": ["quentin/sleep/loop.py", "quentin/sleep/loop_impl.py"],
+        "trace_capability_id": "l2.sleep_loop",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l2.sleep_loop", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "sleep_loop"
+      }
+    },
+
+    {
+      "id": "l3.research_interface",
+      "name": "ResearchInterfaceV3 (Stable API)",
+      "layer": "L3_research_evolution",
+      "phase": "phase2_eval_experiments",
+      "category": "research",
+      "description": "Stable create/run/decide/apply API for offline experiments and promotions.",
+      "required_capabilities": ["create_experiment", "run_experiment", "decide_and_promote_variant"],
+      "hints": {
+        "modules": ["quentin/l3/research/interface.py", "quentin/l3/research/experiment_orchestrator.py"],
+        "trace_capability_id": "l3.research_interface",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l3.research_interface", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "research_manager"
+      }
+    },
+    {
+      "id": "l3.eval_harness",
+      "name": "EvalHarness (Offline)",
+      "layer": "L3_research_evolution",
+      "phase": "phase2_eval_experiments",
+      "category": "research",
+      "description": "Offline eval harness with deterministic evaluators (planner/model_router/memory/immune).",
+      "required_capabilities": ["register_evaluator", "run_suite"],
+      "hints": {
+        "modules": ["quentin/l3/research/eval_harness.py"],
+        "trace_capability_id": "l3.eval_harness",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l3.eval_harness", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "eval_harness"
+      }
+    },
+    {
+      "id": "l3.experiment_orchestrator",
+      "name": "ExperimentOrchestrator (KV-backed)",
+      "layer": "L3_research_evolution",
+      "phase": "phase2_eval_experiments",
+      "category": "research",
+      "description": "KV-backed experiments, runs, decisions, and best-effort apply.",
+      "required_capabilities": ["submit_run", "dispatch_run", "promotion_apply"],
+      "hints": {
+        "modules": ["quentin/l3/research/experiment_orchestrator.py"],
+        "trace_capability_id": "l3.experiment_orchestrator",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "l3.experiment_orchestrator", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "research_manager"
+      }
+    },
+
+    {
+      "id": "selfprog.engine_v2",
+      "name": "SelfProgrammingEngineV2",
+      "layer": "L3_research_evolution",
+      "phase": "phase4_self_programming",
+      "category": "self_programming",
+      "description": "Patch generation and governance pipeline.",
+      "required_capabilities": ["propose_patch", "evaluate_patch"],
+      "hints": {
+        "modules": ["meta_agent/self_programming/engine_v2.py"],
+        "trace_capability_id": "selfprog.engine_v2",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "selfprog.engine_v2", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "self_programming"
+      }
+    },
+    {
+      "id": "selfprog.deterministic_backend",
+      "name": "Deterministic Coder Backend (Offline)",
+      "layer": "L3_research_evolution",
+      "phase": "phase4_self_programming",
+      "category": "self_programming",
+      "description": "Deterministic backend for CI/local regression without external providers.",
+      "required_capabilities": ["deterministic_backend"],
+      "hints": {
+        "modules": ["meta_agent/tools/coder/deterministic_backend.py"],
+        "trace_capability_id": "selfprog.deterministic_backend",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "selfprog.deterministic_backend", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "self_programming"
+      }
+    },
+
+    {
+      "id": "multi_agent.council_manager",
+      "name": "CouncilManager (Role-based)",
+      "layer": "L2_meta",
+      "phase": "phase1_memory_reflexion",
+      "category": "multi_agent",
+      "description": "Role-based council routing and aggregation.",
+      "required_capabilities": ["roles", "aggregate"],
+      "hints": {
+        "modules": ["quentin/council/manager.py"],
+        "trace_capability_id": "multi_agent.council_manager",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "multi_agent.council_manager", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "council_manager"
+      }
+    },
+    {
+      "id": "multi_agent.multi_ai_council",
+      "name": "MultiAICouncil (Committee)",
+      "layer": "L2_meta",
+      "phase": "phase1_memory_reflexion",
+      "category": "multi_agent",
+      "description": "Simple multi-agent committee mode for key decisions (supports stub provider).",
+      "required_capabilities": ["committee_mode"],
+      "hints": {
+        "modules": ["quentin/llm/multi_council.py"],
+        "trace_capability_id": "multi_agent.multi_ai_council",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "multi_agent.multi_ai_council", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "multi_ai_council"
+      }
+    },
+
+    {
+      "id": "routing.model_router",
+      "name": "ModelRouter (Rules + Metrics)",
+      "layer": "L0_infra_kernel",
+      "phase": "phase0_kernel_trace",
+      "category": "routing",
+      "description": "Rule-based routing with logged decisions for research optimization.",
+      "required_capabilities": ["route", "rules", "metrics"],
+      "hints": {
+        "modules": ["quentin/routing/model_router.py", "quentin/router/metrics.py"],
+        "trace_capability_id": "routing.model_router",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "routing.model_router", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "model_router"
+      }
+    },
+
+    {
+      "id": "observability.overview",
+      "name": "Observability Overview (Stable Schema)",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "observability",
+      "description": "Overview reads persisted artifacts under data/ and returns stable schema.",
+      "required_capabilities": ["get_overview"],
+      "hints": {
+        "modules": ["quentin/observability/service.py"],
+        "trace_capability_id": "observability.overview",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "observability.overview", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "observability_overview"
+      }
+    },
+    {
+      "id": "observability.dashboard_html",
+      "name": "Static HTML Dashboard (Offline)",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "observability",
+      "description": "Render an offline HTML dashboard from the overview JSON.",
+      "required_capabilities": ["render_html"],
+      "hints": {
+        "modules": ["scripts/render_overview_dashboard.py"],
+        "trace_capability_id": "observability.dashboard_html",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "observability.dashboard_html", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "observability_overview"
+      }
+    },
+
+    {
+      "id": "blueprint.scan",
+      "name": "Blueprint Scan (Spec-based)",
+      "layer": "L3_research_evolution",
+      "phase": "phase2_eval_experiments",
+      "category": "blueprint",
+      "description": "Scan spec items across files/traces/experiments for engineering radar.",
+      "required_capabilities": ["blueprint_scan"],
+      "hints": {
+        "modules": ["quentin/blueprint/tracker.py", "quentin/cli/qctl.py"],
+        "trace_capability_id": "blueprint.scan",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "blueprint.scan", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "research_manager"
+      }
+    },
+    {
+      "id": "blueprint.evidence_emitter",
+      "name": "Blueprint Evidence Emitter",
+      "layer": "L3_research_evolution",
+      "phase": "phase2_eval_experiments",
+      "category": "blueprint",
+      "description": "Deterministic offline evidence emission for spec items.",
+      "required_capabilities": ["emit_evidence"],
+      "hints": {
+        "modules": ["quentin/blueprint/evidence_emitter.py", "scripts/emit_blueprint_spec_v3_evidence.py"],
+        "trace_capability_id": "blueprint.evidence_emitter",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "blueprint.evidence_emitter", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "research_manager"
+      }
+    },
+
+    {
+      "id": "bench.memory_recall",
+      "name": "Memory Recall Micro-benchmark",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "benchmark",
+      "description": "Memory recall latency + hit@k micro-benchmark.",
+      "required_capabilities": ["bench_script"],
+      "hints": {
+        "modules": ["scripts/bench_memory_recall.py"],
+        "trace_capability_id": "bench.memory_recall",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "bench.memory_recall", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "eval_harness"
+      }
+    },
+    {
+      "id": "bench.immune_loop",
+      "name": "ImmuneLoop Micro-benchmark",
+      "layer": "L2_meta",
+      "phase": "phase2_eval_experiments",
+      "category": "benchmark",
+      "description": "ImmuneLoop run_once latency micro-benchmark.",
+      "required_capabilities": ["bench_script"],
+      "hints": {
+        "modules": ["scripts/bench_immune_loop.py"],
+        "trace_capability_id": "bench.immune_loop",
+        "trace_signals": [
+          { "event_type": "execution", "trace_id": "bench.immune_loop", "payload": { "action": "section_evidence" } }
+        ],
+        "experiment_capability": "immune_loop"
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "project_id": "autoloop-project",
+  "phase_id": "phase_01",
+  "prd_path": "./blueprint.md",
+  "status": "human_review_required",
+  "acceptance_status": "rejected",
+  "failed_modules": [
+    "module_main"
+  ],
+  "evidence_file": "./autoloop/runtime_real6/evidence/autoloop-project/phase_01/evidence_phase_01_20260307112829782617.json",
+  "replan_rounds": 0,
+  "timestamp": "2026-03-07T11:28:29.784661"
+}

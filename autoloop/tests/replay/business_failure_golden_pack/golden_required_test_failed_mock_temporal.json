@@ -1,0 +1,18 @@
+{
+  "primary_failure_type": "REQUIRED_TEST_FAILED",
+  "first_failure_stage": "acceptance_contract_failed",
+  "missing_artifacts": [],
+  "grader_results": {
+    "contract_validator": "fail"
+  },
+  "failure_events": [
+    {
+      "cause_type": "REQUIRED_TEST_FAILED"
+    },
+    {
+      "cause_type": "GRADER_FAILED"
+    }
+  ],
+  "expected_signature": "required_test_failed:acceptance_contract_failed:grader:contract_validator:fail:events:grader_failed|required_test_failed",
+  "expected_candidate_enum": "BUSINESS_REQUIRED_TEST_FAILED_REQUIRED_TEST_FAILED_ACCEPTANCE_CONTRACT_FAILED_GRADER_CONTRACT_VA"
+}

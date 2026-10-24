@@ -1,0 +1,10 @@
+{
+  "project_id": "autoloop-project",
+  "phase_id": "phase_01",
+  "prd_path": "./blueprint.md",
+  "decision": "approved",
+  "reviewer": "lead_integrator",
+  "notes": "PATH_CONFLICT fixed by forcing artifact path under app/",
+  "required_hook": "./autoloop/runtime_real6/hooks/phase_01_human_review_required.json",
+  "timestamp": "2026-03-07T11:26:04.323783"
+}

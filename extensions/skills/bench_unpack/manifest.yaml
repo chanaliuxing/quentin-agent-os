@@ -1,0 +1,10 @@
+id: bench_unpack
+name: bench.unpack
+description: Benchmark exec-skill plugin. Deterministically "unpacks" a string payload.
+entrypoint: "logic:run"
+domain: bench
+tags:
+  - benchmark
+  - exec_skill
+permissions: []
+requires_env: []

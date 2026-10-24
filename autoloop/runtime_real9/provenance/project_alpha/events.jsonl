@@ -1,0 +1,1 @@
+{"event_id": "evt_dc10aa812b01", "run_id": "project_alpha", "phase_id": "phase_01", "artifact_id": "repair:phase_01", "event_type": "rollback_executed", "timestamp": "2026-03-07T14:12:09.477355", "payload": {"target_layer": "implementation", "resolved_scope_modules": ["module_alpha"], "scope_source": "heuristic", "scope_confidence": 0.5}}

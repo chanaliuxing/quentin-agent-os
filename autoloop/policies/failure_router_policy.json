@@ -1,0 +1,173 @@
+{
+  "structural_codes_force_replan": [
+    "PATH_CONFLICT",
+    "MISSING_TEST_BINDING",
+    "CONTRACT_MISMATCH"
+  ],
+  "max_repeat_before_replan": 2,
+  "non_retryable_failure_types": [
+    "RUNNER_USAGE_LIMIT",
+    "MISSING_DEV_ARTIFACT",
+    "MISSING_QA_ARTIFACT",
+    "MISSING_DEV_RESULT",
+    "MISSING_QA_RESULT",
+    "MISSING_REVIEWER_RESULT",
+    "MISSING_REQUIRED_TEST",
+    "REQUIRED_TEST_FAILED",
+    "GRADER_FAILED",
+    "BUSINESS_REJECTION_UNMAPPED",
+    "BUSINESS_EVIDENCE_MISSING",
+    "BUSINESS_TEST_POLICY_GAP",
+    "BUSINESS_GRADER_CONTRACT_GAP",
+    "AGENT_SUBPROCESS_NONZERO_EXIT",
+    "AGENT_OUTPUT_MISSING",
+    "AGENT_CONTRACT_VIOLATION",
+    "AGENT_ARTIFACT_WRITE_FAILED",
+    "AGENT_RUNNER_SESSION_DEGRADED",
+    "AGENT_RESULT_PARSE_FAILED"
+  ],
+  "failure_type_actions": {
+    "RUNNER_USAGE_LIMIT": {
+      "action": "replan_from_spec",
+      "owner": "integrator"
+    },
+    "MISSING_DEV_ARTIFACT": {
+      "action": "replan_from_spec",
+      "owner": "dev"
+    },
+    "MISSING_QA_ARTIFACT": {
+      "action": "replan_from_spec",
+      "owner": "qa"
+    },
+    "MISSING_DEV_RESULT": {
+      "action": "replan_from_spec",
+      "owner": "dev"
+    },
+    "MISSING_QA_RESULT": {
+      "action": "replan_from_spec",
+      "owner": "qa"
+    },
+    "MISSING_REVIEWER_RESULT": {
+      "action": "replan_from_spec",
+      "owner": "reviewer"
+    },
+    "MISSING_PLANNER_RESULT": {
+      "action": "retry_same_plan",
+      "owner": "planner"
+    },
+    "PLANNER_HANDOFF_STATE_MISMATCH": {
+      "action": "retry_same_plan",
+      "owner": "planner"
+    },
+    "MISSING_REQUIRED_TEST": {
+      "action": "replan_from_spec",
+      "owner": "qa"
+    },
+    "REQUIRED_TEST_FAILED": {
+      "action": "replan_from_spec",
+      "owner": "qa"
+    },
+    "GRADER_FAILED": {
+      "action": "replan_from_spec",
+      "owner": "integrator"
+    },
+    "BUSINESS_REJECTION_UNMAPPED": {
+      "action": "taxonomy_review_required",
+      "owner": "integrator"
+    },
+    "BUSINESS_EVIDENCE_MISSING": {
+      "action": "taxonomy_review_required",
+      "owner": "integrator"
+    },
+    "BUSINESS_TEST_POLICY_GAP": {
+      "action": "replan_from_spec",
+      "owner": "qa"
+    },
+    "BUSINESS_GRADER_CONTRACT_GAP": {
+      "action": "replan_from_spec",
+      "owner": "integrator"
+    },
+    "AGENT_SUBPROCESS_NONZERO_EXIT": {
+      "action": "replan_from_spec",
+      "owner": "dev"
+    },
+    "AGENT_OUTPUT_MISSING": {
+      "action": "replan_from_spec",
+      "owner": "dev"
+    },
+    "AGENT_CONTRACT_VIOLATION": {
+      "action": "replan_from_spec",
+      "owner": "reviewer"
+    },
+    "AGENT_ARTIFACT_WRITE_FAILED": {
+      "action": "replan_from_spec",
+      "owner": "dev"
+    },
+    "AGENT_RUNNER_SESSION_DEGRADED": {
+      "action": "replan_from_spec",
+      "owner": "integrator"
+    },
+    "AGENT_RESULT_PARSE_FAILED": {
+      "action": "replan_from_spec",
+      "owner": "reviewer"
+    }
+  },
+  "failure_type_stage_actions": {
+    "AGENT_SUBPROCESS_NONZERO_EXIT": {
+      "planner": {
+        "action": "retry_same_plan",
+        "owner": "planner"
+      },
+      "reviewer": {
+        "action": "retry_same_plan",
+        "owner": "reviewer"
+      },
+      "dev": {
+        "action": "replan_from_spec",
+        "owner": "dev"
+      },
+      "qa": {
+        "action": "replan_from_spec",
+        "owner": "qa"
+      }
+    }
+  },
+  "stage_actions": {
+    "required_test_missing": {
+      "action": "replan_from_spec",
+      "owner": "qa"
+    },
+    "grader_failed": {
+      "action": "replan_from_spec",
+      "owner": "integrator"
+    },
+    "review_gate_rejected": {
+      "action": "replan_from_spec",
+      "owner": "reviewer"
+    },
+    "dev_output_missing": {
+      "action": "retry_same_plan",
+      "owner": "dev"
+    },
+    "reviewer_output_missing": {
+      "action": "retry_same_plan",
+      "owner": "reviewer"
+    },
+    "qa_output_missing": {
+      "action": "retry_same_plan",
+      "owner": "qa"
+    },
+    "dev_contract_failed": {
+      "action": "retry_same_plan",
+      "owner": "dev"
+    },
+    "qa_contract_failed": {
+      "action": "retry_same_plan",
+      "owner": "qa"
+    },
+    "module_pipeline_failed": {
+      "action": "retry_same_plan",
+      "owner": "integrator"
+    }
+  }
+}

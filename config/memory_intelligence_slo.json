@@ -1,0 +1,16 @@
+{
+  "weights": {
+    "task_success_rate": 0.45,
+    "first_hit_useful_rate": 0.25,
+    "error_recurrence_resistance": 0.2,
+    "memory_pollution_resistance": 0.1
+  },
+  "thresholds": {
+    "task_success_rate_min": 0.85,
+    "first_hit_useful_rate_min": 0.75,
+    "error_recurrence_rate_max": 0.2,
+    "memory_pollution_rate_max": 0.35,
+    "intelligence_score_min": 75.0,
+    "p95_ms_max": 800.0
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "required_test_aliases": {
+    "unit": ["unit", "regression"],
+    "integration": ["integration", "regression"],
+    "regression": ["regression"],
+    "static_scan": ["static_scan"],
+    "benchmark": ["benchmark"],
+    "compile": ["compile"]
+  }
+}

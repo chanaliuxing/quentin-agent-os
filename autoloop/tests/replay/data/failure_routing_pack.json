@@ -1,0 +1,107 @@
+[
+  {
+    "name": "missing_dev_result_non_retryable",
+    "input": {
+      "status": "failed",
+      "acceptance_status": "rejected",
+      "failed_modules": ["module_main"],
+      "replan_rounds": 0,
+      "reviewer_codes": [],
+      "failure_type": "MISSING_DEV_RESULT",
+      "first_failure_stage": "dev_output_missing",
+      "failure_signature_count": 0,
+      "max_review_loops": 2
+    },
+    "expected_action": "replan_from_spec"
+  },
+  {
+    "name": "runner_usage_limit",
+    "input": {
+      "status": "failed",
+      "acceptance_status": "rejected",
+      "failed_modules": ["module_main"],
+      "replan_rounds": 0,
+      "reviewer_codes": [],
+      "failure_type": "RUNNER_USAGE_LIMIT",
+      "first_failure_stage": "dev_contract_failed",
+      "failure_signature_count": 0,
+      "max_review_loops": 2
+    },
+    "expected_action": "replan_from_spec"
+  },
+  {
+    "name": "reviewer_structural_code_forces_replan",
+    "input": {
+      "status": "failed",
+      "acceptance_status": "rejected",
+      "failed_modules": ["module_main"],
+      "replan_rounds": 0,
+      "reviewer_codes": ["PATH_CONFLICT"],
+      "failure_type": "",
+      "first_failure_stage": "review_gate_rejected",
+      "failure_signature_count": 0,
+      "max_review_loops": 2
+    },
+    "expected_action": "replan_from_spec"
+  },
+  {
+    "name": "missing_required_test_replans",
+    "input": {
+      "status": "failed",
+      "acceptance_status": "rejected",
+      "failed_modules": ["module_main"],
+      "replan_rounds": 0,
+      "reviewer_codes": [],
+      "failure_type": "MISSING_REQUIRED_TEST",
+      "first_failure_stage": "required_test_missing",
+      "failure_signature_count": 0,
+      "max_review_loops": 2
+    },
+    "expected_action": "replan_from_spec"
+  },
+  {
+    "name": "grader_failed_replans",
+    "input": {
+      "status": "failed",
+      "acceptance_status": "rejected",
+      "failed_modules": ["module_main"],
+      "replan_rounds": 0,
+      "reviewer_codes": [],
+      "failure_type": "GRADER_FAILED",
+      "first_failure_stage": "grader_failed",
+      "failure_signature_count": 0,
+      "max_review_loops": 2
+    },
+    "expected_action": "replan_from_spec"
+  },
+  {
+    "name": "business_unmapped_goes_taxonomy_review",
+    "input": {
+      "status": "failed",
+      "acceptance_status": "rejected",
+      "failed_modules": [],
+      "replan_rounds": 0,
+      "reviewer_codes": [],
+      "failure_type": "BUSINESS_REJECTION_UNMAPPED",
+      "first_failure_stage": "unclassified_failure",
+      "failure_signature_count": 0,
+      "max_review_loops": 2
+    },
+    "expected_action": "taxonomy_review_required"
+  },
+  {
+    "name": "passed_run_advances",
+    "input": {
+      "status": "completed",
+      "acceptance_status": "passed",
+      "failed_modules": [],
+      "replan_rounds": 0,
+      "reviewer_codes": [],
+      "failure_type": "",
+      "first_failure_stage": "",
+      "failure_signature_count": 0,
+      "max_review_loops": 2
+    },
+    "expected_action": "advance"
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "contract_version": "1.0",
+  "generated_at": "2026-03-29T16:04:03.629215+00:00",
+  "phase_id": "phase_01",
+  "module_name": "module_main",
+  "task": "Automate desktop workflow. Review legal contract",
+  "summary": {
+    "total_steps": 2,
+    "successful_steps": 2,
+    "failed_steps": 0,
+    "next_investment_area": "execution_efficiency"
+  },
+  "memory_updates": [
+    "step_01:mcp_tool:ok",
+    "step_02:mcp_tool:ok"
+  ],
+  "reflection": "Executed 2 steps with 2 successes; MCP steps=2, self_programming steps=0.",
+  "steps": [
+    {
+      "step_id": "step_01",
+      "description": "Automate desktop workflow",
+      "required_capability": "desktop_automation"
+    },
+    {
+      "step_id": "step_02",
+      "description": "Review legal contract",
+      "required_capability": "legal_reasoning"
+    }
+  ],
+  "step_results": [
+    {
+      "step_id": "step_01",
+      "track": "mcp_tool",
+      "executor": "desktop_mcp",
+      "success": true,
+      "output": "tool:desktop_mcp"
+    },
+    {
+      "step_id": "step_02",
+      "track": "mcp_tool",
+      "executor": "legal_mcp",
+      "success": true,
+      "output": "tool:legal_mcp"
+    }
+  ]
+}

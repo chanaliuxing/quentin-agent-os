@@ -1,0 +1,11 @@
+{
+  "primary_failure_type": "BUSINESS_REJECTION_UNMAPPED",
+  "first_failure_stage": "unclassified_failure",
+  "missing_artifacts": [],
+  "grader_results": {},
+  "failure_events": [
+    {"cause_type": "MISSING_REQUIRED_TEST"}
+  ],
+  "expected_signature": "business_rejection_unmapped:unclassified_failure:events:missing_required_test",
+  "expected_candidate_enum": "BUSINESS_REJECTION_UNMAPPED_UNCLASSIFIED_FAILURE_EVENTS_MISSING_REQUIRED_TEST"
+}

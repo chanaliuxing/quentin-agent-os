@@ -1,0 +1,21 @@
+{
+  "structural_codes_force_replan": [
+    "PATH_CONFLICT",
+    "MISSING_TEST_BINDING"
+  ],
+  "max_repeat_before_replan": 2,
+  "non_retryable_failure_types": [
+    "MISSING_REQUIRED_TEST",
+    "GRADER_FAILED"
+  ],
+  "failure_type_actions": {
+    "MISSING_REQUIRED_TEST": {
+      "action": "replan_from_spec",
+      "owner": "qa"
+    },
+    "GRADER_FAILED": {
+      "action": "replan_from_spec",
+      "owner": "integrator"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+sync_policies:
+  memory:
+    allow: true
+    filter_level: "strict"
+  tools:
+    allow: true
+    filter_level: "moderate"
+  policies:
+    allow: false # Policy sync disabled by default

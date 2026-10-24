@@ -1,0 +1,14 @@
+{
+  "version": "v3-test",
+  "items": [
+    {
+      "id": "test.safe_gap",
+      "name": "Safe Gap",
+      "layer": "L1",
+      "phase": "phase1",
+      "category": "core",
+      "description": "A safe gap for demo.",
+      "hints": {"modules": ["quentin/mutable/demo_safe.py"]}
+    }
+  ]
+}

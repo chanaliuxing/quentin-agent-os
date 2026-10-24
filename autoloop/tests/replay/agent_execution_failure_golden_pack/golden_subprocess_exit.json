@@ -1,0 +1,11 @@
+{
+  "primary_failure_type": "AGENT_SUBPROCESS_NONZERO_EXIT",
+  "first_failure_stage": "dev_output_missing",
+  "missing_artifacts": [],
+  "grader_results": {},
+  "failure_events": [
+    {"cause_type": "AGENT_SUBPROCESS_NONZERO_EXIT"}
+  ],
+  "expected_signature": "agent_subprocess_nonzero_exit:dev_output_missing:events:agent_subprocess_nonzero_exit",
+  "expected_candidate_enum": "AGENT_SUBPROCESS_NONZERO_EXIT_DEV_OUTPUT_MISSING_EVENTS_AGENT_SUBPROCESS_NONZERO_EXIT"
+}

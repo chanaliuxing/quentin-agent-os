@@ -1,0 +1,37 @@
+version: "2.0.0"
+sections:
+  - title: "Phase 1: Blueprint as Code"
+    clauses:
+      - id: "BP-1.1"
+        title: "Blueprint Structural Model (AST)"
+        category: "architecture"
+        priority: 1
+        status: "in_progress"
+        depends_on: []
+        rationale: "To enable self-modification, the blueprint must be a structured, machine-readable object, not a free-form text document."
+        acceptance_criteria:
+          - "Blueprint models (Document, Section, Clause) are defined in meta_agent/blueprint/model.py."
+          - "The system can load a YAML/JSON blueprint into these models."
+      - id: "BP-1.2"
+        title: "Blueprint GapTracker v2 (Quality + Coverage)"
+        category: "architecture"
+        priority: 2
+        status: "planned"
+        depends_on:
+          - "BP-1.1"
+        rationale: "The gap tracker must go beyond simple existence checks to assess implementation quality and test coverage."
+        acceptance_criteria:
+          - "GapTracker can identify implemented clauses that lack tests."
+          - "StatusSnapshot includes blueprint completion statistics."
+  - title: "Phase 2: Research Ingestion Pipeline"
+    clauses:
+      - id: "BP-2.1"
+        title: "Research Source Connectors"
+        category: "research"
+        priority: 3
+        status: "planned"
+        depends_on:
+          - "BP-1.1"
+        rationale: "The system needs a way to ingest external knowledge to escape local maxima and incorporate new ideas."
+        acceptance_criteria:
+          - "A local folder connector can ingest markdown files from a 'research_notes' directory."

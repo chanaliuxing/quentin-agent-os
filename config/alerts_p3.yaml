@@ -1,0 +1,10 @@
+alerts:
+  lane_queue_wait_ms:
+    threshold: 5000
+    severity: warning
+  provider_failover_rate:
+    threshold: 0.5
+    severity: critical
+  context_compaction_rate:
+    threshold: 0.8
+    severity: info

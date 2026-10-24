@@ -1,0 +1,17 @@
+{
+  "version": "2026-03-28",
+  "online": {
+    "max_records": 300000,
+    "active_window_days": 90,
+    "backend": "champion_qdrant"
+  },
+  "offline": {
+    "min_records": 300001,
+    "recommended_mode": "batch_benchmark_or_reindex",
+    "backend": "champion_qdrant_plus_cold_pg"
+  },
+  "notes": [
+    "Online tier is latency-sensitive and must keep qdrant vector backend ready.",
+    "Offline tier covers million-scale rebaseline and long-running stress jobs."
+  ]
+}
